@@ -33,7 +33,7 @@ class Bank:
                 return acc_no
 
     @classmethod
-    def create_account(cls, name, age, email, pin):
+    def create_account(cls, name, age, email, pin, phone="", address="", acc_type="Savings"):
         name = name.strip()
         if not name:
             return None, "Name is required."
@@ -53,6 +53,9 @@ class Bank:
             "age": age,
             "email": email,
             "pin": int(pin),
+            "phone": phone,
+            "address": address,
+            "acc_type": acc_type,
             "accountNo": acc_no,
             "balance": 0,
             "transactions": [
@@ -148,7 +151,7 @@ class Bank:
         return True, f"Successfully transferred Rs. {amount} to {receiver.get('name')}."
 
     @classmethod
-    def update_user(cls, acc_no, pin, name, email, new_pin):
+    def update_user(cls, acc_no, pin, name, email, new_pin, phone=None, address=None):
         accounts = cls._load_data()
         for a in accounts:
             a_acc = a.get("accountNo") or a.get("accountNo.")
@@ -157,6 +160,10 @@ class Bank:
                     a["name"] = name
                 if email:
                     a["email"] = email
+                if phone:
+                    a["phone"] = phone
+                if address:
+                    a["address"] = address
                 if new_pin:
                     if len(new_pin) == 4 and new_pin.isdigit():
                         a["pin"] = int(new_pin)

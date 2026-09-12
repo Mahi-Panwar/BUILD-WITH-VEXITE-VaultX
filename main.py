@@ -22,6 +22,9 @@ class CreateAccountRequest(BaseModel):
     age: int
     email: str
     pin: str
+    phone: str = ""
+    address: str = ""
+    accType: str = "Savings"
 
 class AuthRequest(BaseModel):
     accountNo: str
@@ -37,6 +40,8 @@ class UpdateRequest(BaseModel):
     pin: str
     name: Optional[str] = None
     email: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
     newPin: Optional[str] = None
 
 @app.get("/", response_class=HTMLResponse)
@@ -46,7 +51,7 @@ def get_home():
 
 @app.post("/api/create")
 def create_account(req: CreateAccountRequest):
-    user, msg = Bank.create_account(req.name, req.age, req.email, req.pin)
+    user, msg = Bank.create_account(req.name, req.age, req.email, req.pin, req.phone, req.address, req.accType)
     if user:
         return {"ok": True, "msg": msg, "user": user}
     return {"ok": False, "msg": msg}
@@ -79,7 +84,7 @@ class ChatRequest(BaseModel):
 
 @app.post("/api/update")
 def update(req: UpdateRequest):
-    ok, msg = Bank.update_user(req.accountNo, req.pin, req.name, req.email, req.newPin)
+    ok, msg = Bank.update_user(req.accountNo, req.pin, req.name, req.email, req.newPin, req.phone, req.address)
     return {"ok": ok, "msg": msg, "newPin": req.newPin if req.newPin and ok else req.pin}
 
 @app.post("/api/delete")

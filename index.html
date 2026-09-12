@@ -261,6 +261,23 @@ function createFormHTML(){
           <input type="email" id="cr_email" placeholder="john@example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
         </div>
       </div>
+      <div class="flex gap-4">
+        <div class="w-1/2">
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Phone Number</label>
+          <input type="tel" id="cr_phone" placeholder="+1 (555) 000-0000" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+        </div>
+        <div class="w-1/2">
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Account Type</label>
+          <select id="cr_acctype" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            <option value="Savings">Savings</option>
+            <option value="Current">Current</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Full Address</label>
+        <input type="text" id="cr_address" placeholder="123 Main St, City, Country" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+      </div>
       <div>
         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Choose a 4-Digit PIN</label>
         <input type="password" id="cr_pin" maxlength="4" placeholder="••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all text-xl tracking-widest font-mono">

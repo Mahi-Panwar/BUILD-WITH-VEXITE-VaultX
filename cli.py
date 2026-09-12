@@ -37,6 +37,11 @@ def create_account():
             console.print("[bold red]Invalid input. Age must be a number.[/bold red]")
 
     email = Prompt.ask("[bold blue]Enter your email address[/bold blue]").strip()
+    phone = Prompt.ask("[bold blue]Enter your phone number[/bold blue]").strip()
+    address = Prompt.ask("[bold blue]Enter your residential address[/bold blue]").strip()
+    
+    acc_type_choice = Prompt.ask("[bold blue]Select Account Type (1: Savings, 2: Current)[/bold blue]", choices=["1", "2"], default="1")
+    acc_type = "Savings" if acc_type_choice == "1" else "Current"
     
     while True:
         pin = Prompt.ask("[bold blue]Please set up a secure 4-digit PIN[/bold blue]", password=True).strip()
@@ -46,7 +51,7 @@ def create_account():
         console.print("[bold red]Invalid input. PIN must be exactly 4 digits.[/bold red]")
 
     loader("Registering account in VaultX...")
-    user, msg = Bank.create_account(name, age, email, pin)
+    user, msg = Bank.create_account(name, age, email, pin, phone, address, acc_type)
     
     if user:
         console.print(f"\n[bold green]{msg}[/bold green]")
@@ -55,6 +60,7 @@ def create_account():
         table.add_column("Key", style="bold cyan")
         table.add_column("Value", style="bold yellow")
         for k, v in user.items():
+            if k == 'transactions': continue
             table.add_row(k.capitalize(), str(v))
         
         console.print(Panel(table, border_style="green", title="SUCCESS"))
@@ -111,6 +117,7 @@ def show_details():
     table.add_column("Details", style="bold white")
 
     for k, v in user.items():
+        if k == 'transactions': continue
         if k == 'balance':
             table.add_row(k.capitalize(), f"[bold green]₹{v}[/bold green]")
         else:
@@ -132,10 +139,12 @@ def update_details():
     console.print("[italic yellow]Leave a field blank to keep current information.[/italic yellow]")
     name = Prompt.ask("[bold blue]New full name[/bold blue]", default="").strip()
     email = Prompt.ask("[bold blue]New email address[/bold blue]", default="").strip()
+    phone = Prompt.ask("[bold blue]New phone number[/bold blue]", default="").strip()
+    address = Prompt.ask("[bold blue]New residential address[/bold blue]", default="").strip()
     new_pin = Prompt.ask("[bold blue]New 4-digit PIN[/bold blue]", password=True, default="").strip()
 
     loader("Updating Account Records...")
-    success, msg = Bank.update_user(acc_no, pin, name, email, new_pin)
+    success, msg = Bank.update_user(acc_no, pin, name, email, new_pin, phone, address)
     
     if success:
         console.print(f"[bold green]✔ {msg}[/bold green]\n")
