@@ -1,0 +1,58 @@
+[
+    {
+        "name": "akarsh",
+        "age": 23,
+        "email": "akarsh@gmail.com",
+        "pin": 1234,
+        "accountNo": "1234",
+        "balance": 0
+    },
+    {
+        "name": "harsh patel",
+        "age": 24,
+        "email": "harsh@gmail.com",
+        "pin": 1342,
+        "accountNo": "17eL0k@",
+        "balance": 1000
+    },
+    {
+        "name": "Akarsh vyas",
+        "age": 23,
+        "email": "akarsh@gmail.com",
+        "pin": 2345,
+        "accountNo": "x2N@G46",
+        "balance": 0
+    },
+    {
+        "name": "Mahi panwar",
+        "age": 20,
+        "email": "panwarmahi@gmail.com",
+        "pin": 7875,
+        "accountNo": "S!7QV61",
+        "balance": 0
+    },
+    {
+        "name": "mahi",
+        "age": 20,
+        "email": "mahpan1331@gmail.com",
+        "pin": 9893,
+        "accountNo": "0@VYU78",
+        "balance": 0
+    },
+    {
+        "name": "mahi panwar",
+        "age": 20,
+        "email": "panwarmahi@gmail.com",
+        "pin": 1331,
+        "accountNo": "W6^51AZ",
+        "balance": 0
+    },
+    {
+        "name": "mahi panwar",
+        "age": 20,
+        "email": "panwarmahi@gmail.com",
+        "pin": 1331,
+        "accountNo": "96KW$4O",
+        "balance": 300
+    }
+]

@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VaultX Bank Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .glass-card { background: linear-gradient(135deg, #0f172a 0%, #334155 100%); }
+    .toast-enter { animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col m-0 p-0">
+
+<div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3"></div>
+
+<div id="app" class="w-full min-h-screen flex flex-col flex-1">
+  <!-- UI rendered here by JS -->
+</div>
+
+<script>
+let state = {
+  user: null,           
+  sessionPin: null,
+  authTab: 'landing',      
+  dashTab: 'dashboard'
+};
+
+async function apiCall(endpoint, payload) {
+  try {
+    const url = endpoint.startsWith('http') ? endpoint : 'http://127.0.0.1:8000' + endpoint;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  } catch (err) {
+    return { ok: false, msg: 'Network error or server down.' };
+  }
+}
+
+async function refreshUser() {
+  if (!state.user) return;
+  const accNo = state.user.accountNo || state.user['accountNo.'];
+  const res = await apiCall('/api/login', { accountNo: accNo, pin: String(state.sessionPin) });
+  if (res.ok) state.user = res.user;
+}
+
+function showToast(msg, isSuccess) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl text-white ${isSuccess ? 'bg-emerald-600' : 'bg-rose-600'}`;
+  toast.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle text-xl' : 'fa-exclamation-circle text-xl'}"></i> <span class="font-medium">${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(20px)';
+    toast.style.transition = 'all 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function render(){
+  const app = document.getElementById('app');
+  if (state.user) {
+    app.innerHTML = dashboardLayoutHTML(state.user);
+  } else if (state.authTab === 'landing') {
+    app.innerHTML = landingPageHTML();
+  } else {
+    app.innerHTML = authLayoutHTML();
+  }
+  wireEvents();
+}
+
+// --- LANDING UI ---
+function landingPageHTML() {
+  return `
+    <!-- Top Navigation -->
+    <nav class="w-full bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center fixed top-0 z-50">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-white">
+          <i class="fas fa-university text-xl"></i>
+        </div>
+        <span class="text-xl font-bold tracking-tight text-slate-900">VaultX</span>
+      </div>
+      <div class="flex gap-4">
+        <button data-tab="login" class="px-5 py-2.5 text-slate-600 font-medium hover:text-slate-900 transition-colors">Sign In</button>
+        <button data-tab="create" class="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg shadow-md transition-all hover:shadow-lg">Get Started</button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="flex-1 flex flex-col lg:flex-row mt-16">
+      <div class="w-full lg:w-1/2 p-8 lg:p-24 flex flex-col justify-center fade-in">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 font-medium text-sm mb-6 w-max border border-blue-100">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          </span>
+          Next-Generation Console Banking
+        </div>
+        <h1 class="text-5xl lg:text-7xl font-extrabold text-slate-900 leading-tight mb-6 tracking-tight">
+          Your Complete <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Banking Solution.</span>
+        </h1>
+        <p class="text-xl text-slate-600 mb-10 leading-relaxed max-w-xl">
+          VaultX Bank Manager organizes banking logic cleanly to provide a secure, validated, and incredibly robust financial experience. Secure logic, clean code, reliable banking.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button data-tab="create" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium rounded-xl shadow-xl shadow-blue-600/20 transition-all hover:-translate-y-1">
+            Open an Account Today <i class="fas fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+        
+        <div class="mt-16 grid grid-cols-3 gap-6 pt-8 border-t border-slate-200 max-w-xl">
+          <div>
+            <div class="text-3xl text-slate-900 mb-2"><i class="fas fa-shield-alt text-emerald-500"></i></div>
+            <div class="font-bold text-slate-800">Bank-Grade</div>
+            <div class="text-sm text-slate-500">4-Digit PIN Security</div>
+          </div>
+          <div>
+            <div class="text-3xl text-slate-900 mb-2"><i class="fas fa-bolt text-amber-500"></i></div>
+            <div class="font-bold text-slate-800">Lightning Fast</div>
+            <div class="text-sm text-slate-500">Instant transactions</div>
+          </div>
+          <div>
+            <div class="text-3xl text-slate-900 mb-2"><i class="fas fa-code text-indigo-500"></i></div>
+            <div class="font-bold text-slate-800">OOP Driven</div>
+            <div class="text-sm text-slate-500">Structured logic</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="w-full lg:w-1/2 bg-slate-50 relative min-h-[500px] flex items-center justify-center p-8 lg:p-12 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200"></div>
+        <!-- Decorative elements -->
+        <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div class="absolute top-1/3 left-1/4 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        
+        <!-- App mockup -->
+        <div class="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-100 fade-in" style="animation-delay: 0.2s;">
+          <div class="bg-slate-900 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+            <div class="text-white font-semibold flex items-center gap-2"><i class="fas fa-landmark text-blue-400"></i> VaultX Dashboard</div>
+            <div class="flex gap-1.5">
+              <div class="w-3 h-3 rounded-full bg-rose-500"></div>
+              <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+              <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+            </div>
+          </div>
+          <div class="p-8">
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl mb-6 font-bold shadow-inner">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="h-6 w-1/2 bg-slate-200 rounded mb-4"></div>
+            <div class="h-12 w-full bg-slate-100 rounded-xl mb-6 border border-slate-200 flex items-center px-4 justify-between">
+              <div class="text-slate-400 font-mono text-sm">BALANCE</div>
+              <div class="text-slate-800 font-bold text-xl">₹ 14,500</div>
+            </div>
+            <div class="flex gap-3">
+              <div class="h-10 w-1/2 bg-blue-600 rounded-lg flex justify-center items-center text-white text-sm font-medium shadow-md shadow-blue-500/20"><i class="fas fa-arrow-down mr-2"></i> Deposit</div>
+              <div class="h-10 w-1/2 bg-white border border-slate-300 rounded-lg flex justify-center items-center text-slate-700 text-sm font-medium"><i class="fas fa-arrow-up mr-2"></i> Withdraw</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// --- AUTHENTICATION UI ---
+function authLayoutHTML() {
+  return `
+    <div class="min-h-screen w-full bg-slate-50 flex items-center justify-center p-4">
+      <button data-tab="landing" class="absolute top-8 left-8 text-slate-500 hover:text-slate-900 flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm border border-slate-200 transition-all hover:shadow-md font-medium">
+        <i class="fas fa-arrow-left"></i> Home
+      </button>
+      
+      <div class="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-slate-100">
+        <div class="p-8 pb-6 text-center border-b border-slate-100">
+          <div class="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-lg">
+            <i class="fas fa-university"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900">Welcome to VaultX</h2>
+          <p class="text-slate-500 mt-1 text-sm">Your complete console banking solution.</p>
+        </div>
+        
+        <div class="flex">
+          <button data-tab="login" class="w-1/2 py-4 font-medium text-sm transition-colors text-center ${state.authTab==='login'?'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50':'text-slate-500 hover:bg-slate-50 border-b border-slate-200'}">Sign In</button>
+          <button data-tab="create" class="w-1/2 py-4 font-medium text-sm transition-colors text-center ${state.authTab==='create'?'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50':'text-slate-500 hover:bg-slate-50 border-b border-slate-200'}">Create Account</button>
+        </div>
+
+        <div class="p-8 bg-white">
+          ${state.authTab === 'login' ? loginFormHTML() : createFormHTML()}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function loginFormHTML(){
+  return `
+    <form id="loginForm" class="space-y-5 fade-in">
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Email or Account Number</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <input type="text" id="li_acc" placeholder="john@example.com" autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1.5">4-Digit Secure PIN</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <i class="fas fa-lock"></i>
+          </div>
+          <input type="password" id="li_pin" maxlength="4" placeholder="••••" autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-xl tracking-widest font-mono">
+        </div>
+      </div>
+      <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-slate-900/20 mt-2">
+        Access Secure Dashboard
+      </button>
+      <div class="pt-4 mt-4 border-t border-slate-100 text-center">
+        <p class="text-xs text-slate-500">Don't have an account? <a href="#" data-tab="create" class="text-blue-600 font-medium hover:underline">Register now</a></p>
+      </div>
+    </form>
+  `;
+}
+
+function createFormHTML(){
+  return `
+    <form id="createForm" class="space-y-4 fade-in">
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Full Name</label>
+        <input type="text" id="cr_name" placeholder="John Doe" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+      </div>
+      <div class="flex gap-4">
+        <div class="w-1/3">
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Age</label>
+          <input type="number" id="cr_age" min="18" max="120" placeholder="18" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+        </div>
+        <div class="w-2/3">
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Email</label>
+          <input type="email" id="cr_email" placeholder="john@example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Choose a 4-Digit PIN</label>
+        <input type="password" id="cr_pin" maxlength="4" placeholder="••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all text-xl tracking-widest font-mono">
+      </div>
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30 mt-2">
+        Create Account & Log In
+      </button>
+    </form>
+  `;
+}
+
+// --- DASHBOARD UI ---
+function dashboardLayoutHTML(user) {
+  const accNo = esc(user.accountNo || user['accountNo.']);
+  const initial = esc(user.name.charAt(0).toUpperCase());
+  
+  return `
+    <div class="flex h-screen overflow-hidden bg-slate-100 w-full fade-in">
+      <!-- Sidebar Navigation -->
+      <aside class="w-72 bg-slate-900 text-white flex flex-col hidden md:flex h-full shadow-2xl z-20 shrink-0">
+        <div class="h-20 flex items-center px-8 border-b border-slate-800/60 shrink-0">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-blue-500 rounded flex items-center justify-center shadow-lg shadow-blue-500/30 text-sm">
+              <i class="fas fa-university"></i>
+            </div>
+            <span class="text-xl font-bold tracking-wide">VaultX</span>
+          </div>
+        </div>
+        
+        <div class="p-8 flex-1 overflow-y-auto">
+          <div class="text-xs font-semibold text-slate-500 tracking-wider uppercase mb-4">Main Menu</div>
+          <nav class="space-y-2">
+            <button data-dtab="dashboard" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='dashboard'?'bg-blue-600 text-white shadow-lg shadow-blue-600/20':'text-slate-400 hover:text-white hover:bg-slate-800'}">
+              <i class="fas fa-home w-5 text-center"></i> Overview
+            </button>
+            <button data-dtab="deposit" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='deposit'?'bg-blue-600 text-white shadow-lg shadow-blue-600/20':'text-slate-400 hover:text-white hover:bg-slate-800'}">
+              <i class="fas fa-arrow-down w-5 text-center"></i> Make Deposit
+            </button>
+            <button data-dtab="withdraw" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='withdraw'?'bg-blue-600 text-white shadow-lg shadow-blue-600/20':'text-slate-400 hover:text-white hover:bg-slate-800'}">
+              <i class="fas fa-arrow-up w-5 text-center"></i> Withdraw Funds
+            </button>
+            <button data-dtab="transfer" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='transfer'?'bg-blue-600 text-white shadow-lg shadow-blue-600/20':'text-slate-400 hover:text-white hover:bg-slate-800'}">
+              <i class="fas fa-exchange-alt w-5 text-center"></i> Transfer
+            </button>
+            <button data-dtab="history" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='history'?'bg-blue-600 text-white shadow-lg shadow-blue-600/20':'text-slate-400 hover:text-white hover:bg-slate-800'}">
+              <i class="fas fa-history w-5 text-center"></i> History
+            </button>
+            <button data-dtab="settings" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='settings'?'bg-blue-600 text-white shadow-lg shadow-blue-600/20':'text-slate-400 hover:text-white hover:bg-slate-800'}">
+              <i class="fas fa-cog w-5 text-center"></i> Settings
+            </button>
+          </nav>
+        </div>
+        
+        <div class="p-6 border-t border-slate-800/60 shrink-0 bg-slate-900/50">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center font-bold border border-slate-700">
+              ${initial}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold truncate">${esc(user.name)}</div>
+              <div class="text-xs text-slate-400 font-mono truncate">A/C: ${accNo}</div>
+            </div>
+          </div>
+          <button id="logoutLink" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-rose-400 border border-slate-800 hover:bg-rose-500/10 hover:border-rose-500/30 transition-all font-medium text-sm">
+            <i class="fas fa-sign-out-alt"></i> Sign Out
+          </button>
+        </div>
+      </aside>
+      
+      <!-- Mobile Topbar -->
+      <div class="md:hidden w-full bg-slate-900 text-white h-16 flex items-center justify-between px-4 shrink-0 shadow-md">
+         <div class="flex items-center gap-2 font-bold"><i class="fas fa-university text-blue-500"></i> VaultX</div>
+         <button id="mobileLogout" class="text-xs bg-rose-500/20 text-rose-300 px-3 py-1.5 rounded"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+
+      <!-- Main Workspace -->
+      <main class="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
+        <!-- Dashboard Header -->
+        <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 px-8 flex items-center justify-between shrink-0 z-10 hidden md:flex">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-800 capitalize">Good day, ${esc(user.name.split(' ')[0])}</h1>
+            <p class="text-sm text-slate-500">Here's your financial overview.</p>
+          </div>
+          <div class="flex items-center gap-4">
+             <div class="px-4 py-2 bg-slate-100 rounded-full text-sm font-medium text-slate-600 border border-slate-200 shadow-inner">
+               Status: <span class="text-emerald-500"><i class="fas fa-shield-check"></i> Secured</span>
+             </div>
+          </div>
+        </header>
+        
+        <!-- Mobile Navigation Tabs -->
+        <div class="md:hidden flex overflow-x-auto bg-white border-b border-slate-200 shrink-0 px-2 py-2 gap-2">
+           <button data-dtab="dashboard" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='dashboard'?'bg-blue-50 text-blue-600 border border-blue-100':'text-slate-600'}">Overview</button>
+           <button data-dtab="deposit" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='deposit'?'bg-blue-50 text-blue-600 border border-blue-100':'text-slate-600'}">Deposit</button>
+           <button data-dtab="withdraw" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='withdraw'?'bg-blue-50 text-blue-600 border border-blue-100':'text-slate-600'}">Withdraw</button>
+           <button data-dtab="transfer" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='transfer'?'bg-blue-50 text-blue-600 border border-blue-100':'text-slate-600'}">Transfer</button>
+           <button data-dtab="history" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='history'?'bg-blue-50 text-blue-600 border border-blue-100':'text-slate-600'}">History</button>
+           <button data-dtab="settings" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='settings'?'bg-blue-50 text-blue-600 border border-blue-100':'text-slate-600'}">Settings</button>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50/50">
+          <div class="max-w-5xl mx-auto">
+            ${renderDashPanel(user)}
+          </div>
+        </div>
+      </main>
+    </div>
+  `;
+}
+
+function renderDashPanel(user) {
+  const balance = user.balance || 0;
+  const accNo = user.accountNo || user['accountNo.'];
+  
+  if (state.dashTab === 'dashboard') {
+    return `
+      <div class="fade-in">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- Balance & Card Section -->
+          <div class="lg:col-span-2 space-y-8">
+            <!-- Premium Virtual Card -->
+            <div class="glass-card rounded-3xl p-8 text-white shadow-2xl shadow-slate-800/20 relative overflow-hidden">
+              <!-- Geometric overlay -->
+              <div class="absolute -right-20 -top-20 w-64 h-64 border-[30px] border-white/5 rounded-full pointer-events-none"></div>
+              <div class="absolute right-20 -bottom-20 w-48 h-48 border-[20px] border-white/5 rounded-full pointer-events-none"></div>
+              
+              <div class="flex justify-between items-start mb-10 relative z-10">
+                <div>
+                  <div class="text-slate-400 text-sm font-medium uppercase tracking-widest mb-1">Available Ledger Balance</div>
+                  <div class="text-5xl font-bold font-mono tracking-tight flex items-baseline gap-2">
+                    <span class="text-3xl text-slate-400 font-sans font-normal">₹</span>${balance.toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                  </div>
+                </div>
+                <div class="bg-white/10 p-3 rounded-2xl backdrop-blur-sm border border-white/20">
+                  <i class="fas fa-university text-3xl text-white"></i>
+                </div>
+              </div>
+              
+              <div class="flex justify-between items-end relative z-10">
+                <div class="space-y-1">
+                  <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Account Holder</div>
+                  <div class="text-xl font-medium tracking-wide">${esc(user.name)}</div>
+                </div>
+                <div class="space-y-1 text-right">
+                  <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Account Number</div>
+                  <div class="text-xl font-mono tracking-widest bg-white/10 px-3 py-1 rounded border border-white/10">${esc(accNo)}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Action Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <button data-dtab="deposit" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all text-left group">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform mb-3">
+                  <i class="fas fa-arrow-down"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Deposit</h3>
+                <p class="text-xs text-slate-500 mt-1">Add funds</p>
+              </button>
+              <button data-dtab="withdraw" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all text-left group">
+                <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform mb-3">
+                  <i class="fas fa-arrow-up"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Withdraw</h3>
+                <p class="text-xs text-slate-500 mt-1">Remove funds</p>
+              </button>
+              <button data-dtab="transfer" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all text-left group">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform mb-3">
+                  <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Transfer</h3>
+                <p class="text-xs text-slate-500 mt-1">Send to account</p>
+              </button>
+            </div>
+          </div>
+            
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl shadow-md p-6 text-white text-center">
+              <i class="fas fa-shield-alt text-4xl text-blue-400 mb-4 block"></i>
+              <h3 class="font-bold text-lg mb-2">VaultX Security</h3>
+              <p class="text-sm text-slate-400 leading-relaxed mb-4">Your account is protected by industry standard OOP data structures and rigorous logic checks.</p>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    `;
+  }
+  
+  if (state.dashTab === 'deposit') {
+    return `
+      <div class="fade-in max-w-2xl mx-auto">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+          <div class="bg-emerald-50 p-8 border-b border-emerald-100 flex items-center justify-between">
+            <div>
+              <h2 class="text-2xl font-bold text-emerald-800 mb-1">Deposit Funds</h2>
+              <p class="text-emerald-600 text-sm">Securely add money to your ledger.</p>
+            </div>
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm text-3xl text-emerald-500">
+              <i class="fas fa-arrow-down"></i>
+            </div>
+          </div>
+          <div class="p-8">
+            <form id="depositForm" class="space-y-6">
+              <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">Amount to Deposit</label>
+                <div class="relative flex items-center">
+                  <span class="absolute left-6 text-2xl text-slate-400 font-light">₹</span>
+                  <input type="number" id="dep_amt" min="1" max="100000" placeholder="5000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:ring-0 focus:border-emerald-500 outline-none text-3xl font-bold text-slate-800 transition-all font-mono">
+                </div>
+                <p class="text-xs text-slate-500 mt-3 flex items-center gap-1"><i class="fas fa-info-circle"></i> Maximum single deposit limit applies.</p>
+              </div>
+              <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-emerald-600/30 flex justify-center items-center gap-3 mt-4">
+                Confirm Deposit <i class="fas fa-check"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  if (state.dashTab === 'withdraw') {
+    return `
+      <div class="fade-in max-w-2xl mx-auto">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+          <div class="bg-rose-50 p-8 border-b border-rose-100 flex items-center justify-between">
+            <div>
+              <h2 class="text-2xl font-bold text-rose-800 mb-1">Withdraw Funds</h2>
+              <p class="text-rose-600 text-sm">Available Balance: <span class="font-bold text-rose-700 font-mono text-base">₹${balance.toLocaleString('en-IN')}</span></p>
+            </div>
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm text-3xl text-rose-500">
+              <i class="fas fa-arrow-up"></i>
+            </div>
+          </div>
+          <div class="p-8">
+            <form id="withdrawForm" class="space-y-6">
+              <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">Amount to Withdraw</label>
+                <div class="relative flex items-center">
+                  <span class="absolute left-6 text-2xl text-slate-400 font-light">₹</span>
+                  <input type="number" id="wd_amt" min="1" max="${balance}" placeholder="2000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:ring-0 focus:border-rose-500 outline-none text-3xl font-bold text-slate-800 transition-all font-mono">
+                </div>
+              </div>
+              <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-rose-600/30 flex justify-center items-center gap-3 mt-4">
+                Confirm Withdrawal <i class="fas fa-shield-check"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+
+  if (state.dashTab === 'transfer') {
+    return `
+      <div class="fade-in max-w-2xl mx-auto">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+          <div class="bg-indigo-50 p-8 border-b border-indigo-100 flex items-center justify-between">
+            <div>
+              <h2 class="text-2xl font-bold text-indigo-800 mb-1">Transfer Funds</h2>
+              <p class="text-indigo-600 text-sm">Instantly send money to another account.</p>
+            </div>
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm text-3xl text-indigo-500">
+              <i class="fas fa-exchange-alt"></i>
+            </div>
+          </div>
+          <div class="p-8">
+            <form id="transferForm" class="space-y-6">
+              <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">Target Account No / Email</label>
+                <input type="text" id="tr_target" placeholder="Recipient's info" required class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:ring-0 focus:border-indigo-500 outline-none text-lg font-medium text-slate-800 transition-all">
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">Amount to Transfer</label>
+                <div class="relative flex items-center">
+                  <span class="absolute left-6 text-2xl text-slate-400 font-light">₹</span>
+                  <input type="number" id="tr_amt" min="1" max="${balance}" placeholder="1000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:ring-0 focus:border-indigo-500 outline-none text-3xl font-bold text-slate-800 transition-all font-mono">
+                </div>
+              </div>
+              <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-indigo-600/30 flex justify-center items-center gap-3 mt-4">
+                Confirm Transfer <i class="fas fa-paper-plane"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  if (state.dashTab === 'history') {
+    const txs = user.transactions || [];
+    const rows = txs.map(t => `
+      <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${t.date}</td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+            ${t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? 'bg-emerald-100 text-emerald-800' : 
+              t.type === 'WITHDRAWAL' || t.type === 'TRANSFER OUT' ? 'bg-rose-100 text-rose-800' : 'bg-blue-100 text-blue-800'}">
+            ${t.type}
+          </span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700">${t.detail || ''}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-right ${t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? 'text-emerald-600' : t.type==='CREATE'?'text-slate-500':'text-rose-600'}">
+          ${t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? '+' : t.type==='CREATE'?'':'-'}₹${t.amount.toLocaleString('en-IN')}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-slate-800 text-right">
+          ₹${t.balance.toLocaleString('en-IN')}
+        </td>
+      </tr>
+    `).join('');
+    
+    return `
+      <div class="fade-in max-w-5xl mx-auto">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-slate-50 p-6 border-b border-slate-200 flex justify-between items-center">
+            <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-history text-slate-500"></i> Transaction History</h3>
+            <span class="text-sm font-medium text-slate-500">${txs.length} total records</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date/Time</th>
+                  <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Type</th>
+                  <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Details</th>
+                  <th class="px-6 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Amount</th>
+                  <th class="px-6 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Balance</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white">
+                ${rows.length ? rows : '<tr><td colspan="5" class="px-6 py-10 text-center text-slate-500">No transactions found.</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (state.dashTab === 'settings') {
+    return `
+      <div class="fade-in max-w-4xl mx-auto space-y-8">
+        <div class="bg-white rounded-3xl shadow-md border border-slate-200 overflow-hidden">
+          <div class="bg-slate-50 p-6 border-b border-slate-200">
+            <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-user-edit text-blue-600"></i> Modify Account Information</h3>
+          </div>
+          <div class="p-8">
+            <form id="updateForm" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-bold text-slate-700 mb-2">Full Name</label>
+                  <input type="text" id="up_name" placeholder="${esc(user.name)}" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow bg-slate-50 focus:bg-white">
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-slate-700 mb-2">Email Address</label>
+                  <input type="email" id="up_email" placeholder="${esc(user.email)}" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow bg-slate-50 focus:bg-white">
+                </div>
+              </div>
+              <div class="max-w-xs">
+                <label class="block text-sm font-bold text-slate-700 mb-2">New 4-Digit PIN</label>
+                <input type="password" id="up_pin" maxlength="4" placeholder="••••" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow bg-slate-50 focus:bg-white text-xl tracking-widest font-mono">
+                <p class="text-xs text-slate-500 mt-2">Leave blank to keep current PIN.</p>
+              </div>
+              <div class="pt-4">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-xl transition-all shadow-md shadow-blue-600/20">
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-md border border-rose-200 overflow-hidden">
+          <div class="bg-rose-50 p-6 border-b border-rose-200">
+            <h3 class="text-xl font-bold text-rose-800 flex items-center gap-2"><i class="fas fa-exclamation-triangle text-rose-600"></i> Terminate Account</h3>
+          </div>
+          <div class="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <p class="text-slate-800 font-medium mb-1">Permanently delete your VaultX profile.</p>
+              <p class="text-sm text-slate-500 max-w-lg">Once you delete your account, all your records, including your balance ledger, will be permanently erased. This action cannot be undone.</p>
+            </div>
+            <button id="deleteBtn" class="shrink-0 bg-white border-2 border-rose-600 text-rose-600 hover:bg-rose-600 hover:text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2">
+              <i class="fas fa-trash-alt"></i> Delete Account
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function wireEvents(){
+  const user = state.user;
+  
+  // Navigation for both states
+  document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.onclick = (e) => { 
+      e.preventDefault();
+      state.authTab = btn.dataset.tab; 
+      render(); 
+    };
+  });
+
+  // Auth Events
+  if (!user){
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) loginForm.onsubmit = async e => {
+      e.preventDefault();
+      const btn = loginForm.querySelector('button');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
+      
+      const acc = document.getElementById('li_acc').value.trim();
+      const pinRaw = document.getElementById('li_pin').value.trim();
+      
+      if (!acc || !pinRaw){ 
+        showToast("Enter both Email/Account No and PIN.", false);
+        btn.innerHTML = originalText;
+        return;
+      }
+      
+      const res = await apiCall('/api/login', { accountNo: acc, pin: pinRaw });
+      if (res.ok){
+        state.user = res.user;
+        state.sessionPin = String(pinRaw);
+        state.dashTab = 'dashboard';
+        showToast("Authentication Successful.", true);
+      } else {
+        showToast(res.msg, false);
+        btn.innerHTML = originalText;
+      }
+      render();
+    };
+
+    const createForm = document.getElementById('createForm');
+    if (createForm) createForm.onsubmit = async e => {
+      e.preventDefault();
+      const btn = createForm.querySelector('button');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
+
+      const name = document.getElementById('cr_name').value;
+      const age = Number(document.getElementById('cr_age').value);
+      const email = document.getElementById('cr_email').value;
+      const pin = document.getElementById('cr_pin').value;
+      
+      const res = await apiCall('/api/create', { name, age, email, pin });
+      if (res.ok){
+        showToast("Account Created successfully!", true);
+        state.user = res.user;
+        state.sessionPin = String(pin);
+        state.dashTab = 'dashboard';
+      } else {
+        showToast(res.msg, false);
+        btn.innerHTML = originalText;
+      }
+      render();
+    };
+    return;
+  }
+
+  // Dashboard Events
+  const logoutBtn = document.getElementById('logoutLink');
+  const mobileLogoutBtn = document.getElementById('mobileLogout');
+  
+  const doLogout = () => {
+    state.user = null; state.sessionPin = null; state.authTab = 'landing';
+    showToast("Logged out securely.", true);
+    render();
+  };
+  
+  if (logoutBtn) logoutBtn.onclick = doLogout;
+  if (mobileLogoutBtn) mobileLogoutBtn.onclick = doLogout;
+
+  document.querySelectorAll('[data-dtab]').forEach(btn => {
+    btn.onclick = () => { state.dashTab = btn.dataset.dtab; render(); };
+  });
+
+  const depositForm = document.getElementById('depositForm');
+  if (depositForm) depositForm.onsubmit = async e => {
+    e.preventDefault();
+    const btn = depositForm.querySelector('button');
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
+
+    const amt = Number(document.getElementById('dep_amt').value);
+    const res = await apiCall('/api/deposit', { accountNo: user.accountNo || user['accountNo.'], pin: state.sessionPin, amount: amt });
+    if (res.ok) {
+      showToast(`Successfully deposited ₹${amt.toLocaleString()}`, true);
+      await refreshUser();
+      state.dashTab = 'dashboard';
+    } else {
+      showToast(res.msg, false);
+      btn.innerHTML = oldHtml;
+    }
+    render();
+  };
+
+  const withdrawForm = document.getElementById('withdrawForm');
+  if (withdrawForm) withdrawForm.onsubmit = async e => {
+    e.preventDefault();
+    const btn = withdrawForm.querySelector('button');
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
+
+    const amt = Number(document.getElementById('wd_amt').value);
+    const res = await apiCall('/api/withdraw', { accountNo: user.accountNo || user['accountNo.'], pin: state.sessionPin, amount: amt });
+    if (res.ok) {
+      showToast(`Successfully withdrew ₹${amt.toLocaleString()}`, true);
+      await refreshUser();
+      state.dashTab = 'dashboard';
+    } else {
+      showToast(res.msg, false);
+      btn.innerHTML = oldHtml;
+    }
+    render();
+  };
+
+
+  const transferForm = document.getElementById('transferForm');
+  if (transferForm) transferForm.onsubmit = async e => {
+    e.preventDefault();
+    const btn = transferForm.querySelector('button');
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
+
+    const target = document.getElementById('tr_target').value;
+    const amt = Number(document.getElementById('tr_amt').value);
+    const res = await apiCall('/api/transfer', { accountNo: user.accountNo || user['accountNo.'], pin: state.sessionPin, targetAccount: target, amount: amt });
+    if (res.ok) {
+      showToast(`Successfully transferred ₹${amt.toLocaleString()}`, true);
+      await refreshUser();
+      state.dashTab = 'dashboard';
+    } else {
+      showToast(res.msg, false);
+      btn.innerHTML = oldHtml;
+    }
+    render();
+  };
+
+  const updateForm = document.getElementById('updateForm');
+  if (updateForm) updateForm.onsubmit = async e => {
+    e.preventDefault();
+    const btn = updateForm.querySelector('button');
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
+
+    const name = document.getElementById('up_name').value;
+    const email = document.getElementById('up_email').value;
+    const pin = document.getElementById('up_pin').value;
+    const res = await apiCall('/api/update', { accountNo: user.accountNo || user['accountNo.'], pin: state.sessionPin, name: name||null, email: email||null, newPin: pin||null });
+    
+    if (res.ok) {
+        state.sessionPin = String(res.newPin);
+        await refreshUser();
+        showToast("Account holder details updated successfully.", true);
+    } else {
+        showToast(res.msg, false);
+    }
+    btn.innerHTML = oldHtml;
+    render();
+  };
+
+  const deleteBtn = document.getElementById('deleteBtn');
+  if (deleteBtn) deleteBtn.onclick = async () => {
+    if (confirm("Are you entirely sure you want to delete your account? This action is irreversible.")) {
+      const btnOldHtml = deleteBtn.innerHTML;
+      deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      const res = await apiCall('/api/delete', { accountNo: user.accountNo || user['accountNo.'], pin: state.sessionPin });
+      if (res.ok){
+        state.user = null; state.sessionPin = null; state.authTab = 'landing';
+        showToast("Account successfully deleted from the database records.", true);
+      } else {
+        showToast(res.msg, false);
+        deleteBtn.innerHTML = btnOldHtml;
+      }
+      render();
+    }
+  };
+}
+
+// Initial render
+render();
+</script>
+
+<!-- Chatbot Widget -->
+<div id="chat-widget" class="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
+  
+  <!-- Chat Window -->
+  <div id="chat-window" class="hidden w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 mb-4 overflow-hidden flex-col h-[500px] max-h-[80vh] fade-in">
+    <!-- Header -->
+    <div class="bg-slate-900 text-white p-4 flex justify-between items-center shrink-0">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+          <i class="fas fa-robot text-sm"></i>
+        </div>
+        <div>
+          <h4 class="font-bold text-sm">VaultX Assistant</h4>
+          <p class="text-[10px] text-slate-300">Powered by Gemini AI</p>
+        </div>
+      </div>
+      <button onclick="toggleChat()" class="text-slate-400 hover:text-white transition-colors">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <!-- Messages Area -->
+    <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-slate-50 flex flex-col gap-3 text-sm">
+      <div class="flex justify-start">
+        <div class="bg-white border border-slate-200 text-slate-800 p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] leading-relaxed">
+          Hello! I am your VaultX AI Assistant. How can I help you today?
+        </div>
+      </div>
+    </div>
+    
+    <!-- Input Area -->
+    <div class="p-3 bg-white border-t border-slate-100 shrink-0">
+      <form id="chat-form" class="relative flex items-center">
+        <input type="text" id="chat-input" autocomplete="off" placeholder="Ask something..." required class="w-full pl-4 pr-12 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+        <button type="submit" class="absolute right-2 w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors shadow-sm">
+          <i class="fas fa-paper-plane text-xs"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Floating Toggle Button -->
+  <button id="chat-toggle" onclick="toggleChat()" class="w-14 h-14 bg-slate-900 hover:bg-slate-800 text-white rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110 active:scale-95 group">
+    <i class="fas fa-comment-dots text-2xl group-hover:hidden"></i>
+    <i class="fas fa-robot text-2xl hidden group-hover:block"></i>
+  </button>
+</div>
+
+<script>
+  function toggleChat() {
+    const window = document.getElementById('chat-window');
+    if (window.classList.contains('hidden')) {
+      window.classList.remove('hidden');
+      window.classList.add('flex');
+    } else {
+      window.classList.add('hidden');
+      window.classList.remove('flex');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // We bind the chat form on next tick to ensure elements exist
+    setTimeout(() => {
+      const chatForm = document.getElementById('chat-form');
+      if (chatForm) {
+        chatForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const input = document.getElementById('chat-input');
+          const msg = input.value.trim();
+          if (!msg) return;
+          
+          input.value = '';
+          const messagesArea = document.getElementById('chat-messages');
+          
+          // Add User Message
+          messagesArea.innerHTML += `
+            <div class="flex justify-end">
+              <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] leading-relaxed">
+                ${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
+              </div>
+            </div>
+          `;
+          messagesArea.scrollTop = messagesArea.scrollHeight;
+          
+          // Add Loading Indicator
+          const loadId = 'loading-' + Date.now();
+          messagesArea.innerHTML += `
+            <div id="${loadId}" class="flex justify-start">
+              <div class="bg-white border border-slate-200 text-slate-500 p-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-2">
+                <i class="fas fa-circle-notch fa-spin"></i> Thinking...
+              </div>
+            </div>
+          `;
+          messagesArea.scrollTop = messagesArea.scrollHeight;
+          
+          try {
+            const url = 'http://127.0.0.1:8000/api/chat';
+            const res = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message: msg })
+            });
+            const data = await res.json();
+            
+            document.getElementById(loadId).remove();
+            
+            // Add Bot Message
+            messagesArea.innerHTML += `
+              <div class="flex justify-start">
+                <div class="bg-white border border-slate-200 text-slate-800 p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] leading-relaxed whitespace-pre-wrap">
+                  ${data.reply ? data.reply.replace(/</g, "&lt;").replace(/>/g, "&gt;") : "Error connecting to AI."}
+                </div>
+              </div>
+            `;
+          } catch(err) {
+            document.getElementById(loadId).remove();
+            messagesArea.innerHTML += `
+              <div class="flex justify-start">
+                <div class="bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] leading-relaxed">
+                  Network error.
+                </div>
+              </div>
+            `;
+          }
+          messagesArea.scrollTop = messagesArea.scrollHeight;
+        };
+      }
+    }, 100);
+  });
+</script>
+
+</body>
+</html>
