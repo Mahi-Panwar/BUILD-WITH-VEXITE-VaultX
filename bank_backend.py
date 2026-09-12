@@ -59,9 +59,12 @@ class Bank:
             "accountNo": acc_no,
             "balance": 0,
             "transactions": [
-                {"date": timestamp, "type": "CREATE", "amount": 0, "balance": 0, "detail": "Account initialized."}
+                {"date": timestamp, "type": "CREATE", "amount": 0, "balance": 0, "detail": "Account initialized."},
+                {"date": timestamp, "type": "DEPOSIT", "amount": 500, "balance": 500, "detail": "VaultX Welcome Bonus!"},
+                {"date": timestamp, "type": "WITHDRAWAL", "amount": 50, "balance": 450, "detail": "Account Setup Fee"}
             ]
         }
+        user["balance"] = 450
         accounts.append(user)
         cls._save_data(accounts)
         
