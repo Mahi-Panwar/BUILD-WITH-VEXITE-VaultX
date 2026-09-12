@@ -58,5 +58,50 @@
         "pin": 1331,
         "accountNo": "96KW$4O",
         "balance": 300
+    },
+    {
+        "name": "Mahi panwar Panwar",
+        "age": 20,
+        "email": "panwarmahi587@gmail.com",
+        "pin": 1331,
+        "phone": "",
+        "address": "",
+        "acc_type": "Savings",
+        "accountNo": "7B49PT*",
+        "balance": 650,
+        "transactions": [
+            {
+                "date": "2026-09-12 15:09:50",
+                "type": "CREATE",
+                "amount": 0,
+                "balance": 0,
+                "detail": "Account initialized."
+            },
+            {
+                "date": "2026-09-12 15:09:50",
+                "type": "DEPOSIT",
+                "amount": 500,
+                "balance": 500,
+                "detail": "VaultX Welcome Bonus!"
+            },
+            {
+                "date": "2026-09-12 15:09:50",
+                "type": "WITHDRAWAL",
+                "amount": 50,
+                "balance": 450,
+                "detail": "Account Setup Fee"
+            },
+            {
+                "date": "2026-09-12 15:10:01",
+                "type": "DEPOSIT",
+                "amount": 200,
+                "balance": 650,
+                "detail": "Cash deposit"
+            }
+        ],
+        "card_number": "4532976482797052",
+        "expiry": "07/27",
+        "cvv": "852",
+        "loans": []
     }
 ]

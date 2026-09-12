@@ -31,13 +31,13 @@
 </script>
 <style>
   body { font-family: 'Playfair Display', serif; }
-  .ledger-bg { background: repeating-linear-gradient(transparent, transparent 31px, #E5D6C1 31px, #E5D6C1 32px); }
+  .bg-[#181b21] { background: repeating-linear-gradient(transparent, transparent 31px, #E5D6C1 31px, #E5D6C1 32px); }
 </style>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    body { font-family: 'Inter', sans-serif;  }
     .fade-in { animation: fadeIn 0.4s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .glass-card { background: linear-gradient(135deg, #0f172a 0%, #334155 100%); }
@@ -91,7 +91,7 @@ async function refreshUser() {
 function showToast(msg, isSuccess) {
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
-  toast.className = `toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl text-cream ${isSuccess ? 'bg-brass text-walnut' : 'bg-rose-600'}`;
+  toast.className = `toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl text-slate-200 ${isSuccess ? 'bg-amber-500 text-walnut' : 'bg-rose-600'}`;
   toast.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle text-xl' : 'fa-exclamation-circle text-xl'}"></i> <span class="font-medium">${msg}</span>`;
   container.appendChild(toast);
   setTimeout(() => {
@@ -122,88 +122,88 @@ function render(){
 function landingPageHTML() {
   return `
     <!-- Top Navigation -->
-    <nav class="w-full bg-cream border-b border-white/10 px-6 py-4 flex justify-between items-center fixed top-0 z-50">
+    <nav class="w-full bg-[#181b21] border-b border-white/10 px-6 py-4 flex justify-between items-center fixed top-0 z-50">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-walnut rounded-lg flex items-center justify-center text-cream">
+        <div class="w-10 h-10 bg-[#0f1115] rounded-lg flex items-center justify-center text-slate-200">
           <i class="fas fa-university text-xl"></i>
         </div>
-        <span class="text-xl font-bold tracking-tight text-cream">VaultX</span>
+        <span class="text-xl font-bold tracking-tight text-slate-200">VaultX</span>
       </div>
       <div class="flex gap-4">
-        <button data-tab="login" class="px-5 py-2.5 text-cream/70 font-medium hover:text-cream transition-colors">Sign In</button>
-        <button data-tab="create" class="px-6 py-2.5 bg-walnut hover:bg-walnut text-cream font-medium rounded-lg shadow-md transition-all hover:shadow-lg">Get Started</button>
+        <button data-tab="login" class="px-5 py-2.5 text-slate-200/70 font-medium hover:text-slate-200 transition-colors">Sign In</button>
+        <button data-tab="create" class="px-6 py-2.5 bg-[#0f1115] hover:bg-[#0f1115] text-slate-200 font-medium rounded-lg shadow-md transition-all hover:shadow-lg">Get Started</button>
       </div>
     </nav>
 
     <!-- Hero Section -->
     <div class="flex-1 flex flex-col lg:flex-row mt-16">
       <div class="w-full lg:w-1/2 p-8 lg:p-24 flex flex-col justify-center fade-in">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cream text-brass font-medium text-sm mb-6 w-max border border-amber-500/20">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#181b21] text-amber-500 font-medium text-sm mb-6 w-max border border-amber-500/20">
           <span class="relative flex h-2 w-2">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-cream0"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#181b21]0"></span>
           </span>
           Next-Generation Console Banking
         </div>
-        <h1 class="text-5xl lg:text-7xl font-extrabold text-cream leading-tight mb-6 tracking-tight">
+        <h1 class="text-5xl lg:text-7xl font-extrabold text-slate-200 leading-tight mb-6 tracking-tight">
           Your Complete <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Banking Solution.</span>
         </h1>
-        <p class="text-xl text-cream/70 mb-10 leading-relaxed max-w-xl">
+        <p class="text-xl text-slate-200/70 mb-10 leading-relaxed max-w-xl">
           VaultX Bank Manager organizes banking logic cleanly to provide a secure, validated, and incredibly robust financial experience. Secure logic, clean code, reliable banking.
         </p>
         <div class="flex flex-col sm:flex-row gap-4">
-          <button data-tab="create" class="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-cream text-lg font-medium rounded-xl shadow-xl shadow-brass/20 transition-all hover:-translate-y-1">
+          <button data-tab="create" class="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-200 text-lg font-medium rounded-xl shadow-xl shadow-brass/20 transition-all hover:-translate-y-1">
             Open an Account Today <i class="fas fa-arrow-right ml-2"></i>
           </button>
         </div>
         
         <div class="mt-16 grid grid-cols-3 gap-6 pt-8 border-t border-white/10 max-w-xl">
           <div>
-            <div class="text-3xl text-cream mb-2"><i class="fas fa-shield-alt text-brass"></i></div>
+            <div class="text-3xl text-slate-200 mb-2"><i class="fas fa-shield-alt text-amber-500"></i></div>
             <div class="font-bold text-slate-100">Bank-Grade</div>
-            <div class="text-sm text-navy/70">4-Digit PIN Security</div>
+            <div class="text-sm text-slate-100/70">4-Digit PIN Security</div>
           </div>
           <div>
-            <div class="text-3xl text-cream mb-2"><i class="fas fa-bolt text-amber-500"></i></div>
+            <div class="text-3xl text-slate-200 mb-2"><i class="fas fa-bolt text-amber-500"></i></div>
             <div class="font-bold text-slate-100">Lightning Fast</div>
-            <div class="text-sm text-navy/70">Instant transactions</div>
+            <div class="text-sm text-slate-100/70">Instant transactions</div>
           </div>
           <div>
-            <div class="text-3xl text-cream mb-2"><i class="fas fa-code text-indigo-500"></i></div>
+            <div class="text-3xl text-slate-200 mb-2"><i class="fas fa-code text-indigo-500"></i></div>
             <div class="font-bold text-slate-100">OOP Driven</div>
-            <div class="text-sm text-navy/70">Structured logic</div>
+            <div class="text-sm text-slate-100/70">Structured logic</div>
           </div>
         </div>
       </div>
       
-      <div class="w-full lg:w-1/2 bg-cream relative min-h-[500px] flex items-center justify-center p-8 lg:p-12 overflow-hidden">
+      <div class="w-full lg:w-1/2 bg-[#181b21] relative min-h-[500px] flex items-center justify-center p-8 lg:p-12 overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200"></div>
         <!-- Decorative elements -->
         <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
         <div class="absolute top-1/3 left-1/4 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
         
         <!-- App mockup -->
-        <div class="relative z-10 w-full max-w-md bg-cream rounded-2xl shadow-2xl overflow-hidden border border-white/5 fade-in" style="animation-delay: 0.2s;">
-          <div class="bg-walnut px-6 py-4 border-b border-ledgerline flex justify-between items-center">
-            <div class="text-cream font-semibold flex items-center gap-2"><i class="fas fa-landmark text-blue-400"></i> VaultX Dashboard</div>
+        <div class="relative z-10 w-full max-w-md bg-[#181b21] rounded-2xl shadow-2xl overflow-hidden border border-white/5 fade-in" style="animation-delay: 0.2s;">
+          <div class="bg-[#0f1115] px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+            <div class="text-slate-200 font-semibold flex items-center gap-2"><i class="fas fa-landmark text-blue-400"></i> VaultX Dashboard</div>
             <div class="flex gap-1.5">
               <div class="w-3 h-3 rounded-full bg-rose-500/100"></div>
               <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-              <div class="w-3 h-3 rounded-full bg-cream0"></div>
+              <div class="w-3 h-3 rounded-full bg-[#181b21]0"></div>
             </div>
           </div>
           <div class="p-8">
-            <div class="w-16 h-16 bg-amber-500/20 text-brass rounded-full flex items-center justify-center text-2xl mb-6 font-bold shadow-inner">
+            <div class="w-16 h-16 bg-amber-500/20 text-amber-500 rounded-full flex items-center justify-center text-2xl mb-6 font-bold shadow-inner">
               <i class="fas fa-user"></i>
             </div>
             <div class="h-6 w-1/2 bg-ledgerline rounded mb-4"></div>
-            <div class="h-12 w-full bg-cream rounded-xl mb-6 border border-white/10 flex items-center px-4 justify-between">
-              <div class="text-navy/70 font-mono text-sm">BALANCE</div>
+            <div class="h-12 w-full bg-[#181b21] rounded-xl mb-6 border border-white/10 flex items-center px-4 justify-between">
+              <div class="text-slate-100/70 font-mono text-sm">BALANCE</div>
               <div class="text-slate-100 font-bold text-xl">₹ 14,500</div>
             </div>
             <div class="flex gap-3">
               <div class="h-10 w-1/2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg flex justify-center items-center text-walnut/80 text-sm font-medium shadow-md shadow-blue-500/20"><i class="fas fa-arrow-down mr-2"></i> Deposit</div>
-              <div class="h-10 w-1/2 bg-cream border border-slate-300 rounded-lg flex justify-center items-center text-cream/70 text-sm font-medium"><i class="fas fa-arrow-up mr-2"></i> Withdraw</div>
+              <div class="h-10 w-1/2 bg-[#181b21] border border-slate-300 rounded-lg flex justify-center items-center text-slate-200/70 text-sm font-medium"><i class="fas fa-arrow-up mr-2"></i> Withdraw</div>
             </div>
           </div>
         </div>
@@ -215,26 +215,26 @@ function landingPageHTML() {
 // --- AUTHENTICATION UI ---
 function authLayoutHTML() {
   return `
-    <div class="min-h-screen w-full bg-cream flex items-center justify-center p-4">
-      <button data-tab="landing" class="absolute top-8 left-8 text-navy/70 hover:text-navy flex items-center gap-2 px-4 py-2 bg-cream rounded-lg shadow-sm border border-mahogany transition-all hover:shadow-md font-medium">
+    <div class="min-h-screen w-full bg-[#181b21] flex items-center justify-center p-4">
+      <button data-tab="landing" class="absolute top-8 left-8 text-slate-100/70 hover:text-slate-100 flex items-center gap-2 px-4 py-2 bg-[#181b21] rounded-lg shadow-sm border border-mahogany transition-all hover:shadow-md font-medium">
         <i class="fas fa-arrow-left"></i> Home
       </button>
       
-      <div class="w-full max-w-md bg-cream rounded-2xl shadow-xl overflow-hidden fade-in border border-white/5">
+      <div class="w-full max-w-md bg-[#181b21] rounded-2xl shadow-xl overflow-hidden fade-in border border-white/5">
         <div class="p-8 pb-6 text-center border-b border-white/5">
-          <div class="w-16 h-16 bg-walnut rounded-2xl flex items-center justify-center text-cream text-2xl mx-auto mb-4 shadow-lg">
+          <div class="w-16 h-16 bg-[#0f1115] rounded-2xl flex items-center justify-center text-slate-200 text-2xl mx-auto mb-4 shadow-lg">
             <i class="fas fa-university"></i>
           </div>
-          <h2 class="text-2xl font-bold text-cream">Welcome to VaultX</h2>
-          <p class="text-navy/70 mt-1 text-sm">Your complete console banking solution.</p>
+          <h2 class="text-2xl font-bold text-slate-200">Welcome to VaultX</h2>
+          <p class="text-slate-100/70 mt-1 text-sm">Your complete console banking solution.</p>
         </div>
         
         <div class="flex">
-          <button data-tab="login" class="w-1/2 py-4 font-medium text-sm transition-colors text-center ${state.authTab==='login'?'text-brass border-b-2 border-brass bg-cream/50':'text-cream/70 hover:bg-cream/10 border-b border-white/10'}">Sign In</button>
-          <button data-tab="create" class="w-1/2 py-4 font-medium text-sm transition-colors text-center ${state.authTab==='create'?'text-brass border-b-2 border-brass bg-cream/50':'text-cream/70 hover:bg-cream/10 border-b border-white/10'}">Create Account</button>
+          <button data-tab="login" class="w-1/2 py-4 font-medium text-sm transition-colors text-center ${state.authTab==='login'?'text-amber-500 border-b-2 border-brass bg-[#181b21]/50':'text-slate-200/70 hover:bg-[#181b21]/10 border-b border-white/10'}">Sign In</button>
+          <button data-tab="create" class="w-1/2 py-4 font-medium text-sm transition-colors text-center ${state.authTab==='create'?'text-amber-500 border-b-2 border-brass bg-[#181b21]/50':'text-slate-200/70 hover:bg-[#181b21]/10 border-b border-white/10'}">Create Account</button>
         </div>
 
-        <div class="p-8 bg-cream ledger-bg">
+        <div class="p-8 bg-[#181b21] bg-[#181b21]">
           ${state.authTab === 'login' ? loginFormHTML() : createFormHTML()}
         </div>
       </div>
@@ -246,28 +246,28 @@ function loginFormHTML(){
   return `
     <form id="loginForm" class="space-y-5 fade-in">
       <div>
-        <label class="block text-sm font-semibold text-cream/70 mb-1.5">Email or Account Number</label>
+        <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Email or Account Number</label>
         <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-navy/70">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-100/70">
             <i class="fas fa-user-circle"></i>
           </div>
-          <input type="text" id="li_acc" placeholder="john@example.com" autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-brass outline-none transition-all">
+          <input type="text" id="li_acc" placeholder="john@example.com" autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-brass outline-none transition-all">
         </div>
       </div>
       <div>
-        <label class="block text-sm font-semibold text-cream/70 mb-1.5">4-Digit Secure PIN</label>
+        <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">4-Digit Secure PIN</label>
         <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-navy/70">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-100/70">
             <i class="fas fa-lock"></i>
           </div>
-          <input type="password" id="li_pin" maxlength="4" placeholder="••••" autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-brass outline-none transition-all text-xl tracking-widest font-mono">
+          <input type="password" id="li_pin" maxlength="4" placeholder="••••" autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-brass outline-none transition-all text-xl tracking-widest font-mono">
         </div>
       </div>
-      <button type="submit" class="w-full bg-walnut hover:bg-walnut text-cream font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-slate-900/20 mt-2">
+      <button type="submit" class="w-full bg-[#0f1115] hover:bg-[#0f1115] text-slate-200 font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-slate-900/20 mt-2">
         Access Secure Dashboard
       </button>
       <div class="pt-4 mt-4 border-t border-white/5 text-center">
-        <p class="text-xs text-navy/70">Don't have an account? <a href="#" data-tab="create" class="text-brass font-medium hover:underline">Register now</a></p>
+        <p class="text-xs text-slate-100/70">Don't have an account? <a href="#" data-tab="create" class="text-amber-500 font-medium hover:underline">Register now</a></p>
       </div>
     </form>
   `;
@@ -277,41 +277,41 @@ function createFormHTML(){
   return `
     <form id="createForm" class="space-y-4 fade-in">
       <div>
-        <label class="block text-sm font-semibold text-cream/70 mb-1.5">Full Name</label>
-        <input type="text" id="cr_name" placeholder="John Doe" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+        <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Full Name</label>
+        <input type="text" id="cr_name" placeholder="John Doe" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
       </div>
       <div class="flex gap-4">
         <div class="w-1/3">
-          <label class="block text-sm font-semibold text-cream/70 mb-1.5">Age</label>
-          <input type="number" id="cr_age" min="18" max="120" placeholder="18" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+          <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Age</label>
+          <input type="number" id="cr_age" min="18" max="120" placeholder="18" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
         </div>
         <div class="w-2/3">
-          <label class="block text-sm font-semibold text-cream/70 mb-1.5">Email</label>
-          <input type="email" id="cr_email" placeholder="john@example.com" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+          <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Email</label>
+          <input type="email" id="cr_email" placeholder="john@example.com" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
         </div>
       </div>
       <div class="flex gap-4">
         <div class="w-1/2">
-          <label class="block text-sm font-semibold text-cream/70 mb-1.5">Phone Number</label>
-          <input type="tel" id="cr_phone" placeholder="+1 (555) 000-0000" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+          <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Phone Number</label>
+          <input type="tel" id="cr_phone" placeholder="+1 (555) 000-0000" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
         </div>
         <div class="w-1/2">
-          <label class="block text-sm font-semibold text-cream/70 mb-1.5">Account Type</label>
-          <select id="cr_acctype" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+          <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Account Type</label>
+          <select id="cr_acctype" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
             <option value="Savings">Savings</option>
             <option value="Current">Current</option>
           </select>
         </div>
       </div>
       <div>
-        <label class="block text-sm font-semibold text-cream/70 mb-1.5">Full Address</label>
-        <input type="text" id="cr_address" placeholder="123 Main St, City, Country" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+        <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Full Address</label>
+        <input type="text" id="cr_address" placeholder="123 Main St, City, Country" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
       </div>
       <div>
-        <label class="block text-sm font-semibold text-cream/70 mb-1.5">Choose a 4-Digit PIN</label>
-        <input type="password" id="cr_pin" maxlength="4" placeholder="••••" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all text-xl tracking-widest font-mono">
+        <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Choose a 4-Digit PIN</label>
+        <input type="password" id="cr_pin" maxlength="4" placeholder="••••" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all text-xl tracking-widest font-mono">
       </div>
-      <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-cream font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-brass/20 mt-2">
+      <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-200 font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-brass/20 mt-2">
         Create Account & Log In
       </button>
     </form>
@@ -324,12 +324,12 @@ function dashboardLayoutHTML(user) {
   const initial = esc(user.name.charAt(0).toUpperCase());
   
   return `
-    <div class="flex h-screen overflow-hidden bg-cream w-full fade-in">
+    <div class="flex h-screen overflow-hidden bg-[#181b21] w-full fade-in">
       <!-- Sidebar Navigation -->
-      <aside class="w-72 bg-gradient-to-r from-cyan-500 to-blue-600 text-cream flex flex-col hidden md:flex h-full shadow-2xl z-20 shrink-0">
-        <div class="h-20 flex items-center px-8 border-b border-ledgerline/60 shrink-0">
+      <aside class="w-72 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 flex flex-col hidden md:flex h-full shadow-2xl z-20 shrink-0">
+        <div class="h-20 flex items-center px-8 border-b border-slate-700/60 shrink-0">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-cream0 rounded flex items-center justify-center shadow-lg shadow-blue-500/30 text-sm">
+            <div class="w-8 h-8 bg-[#181b21]0 rounded flex items-center justify-center shadow-lg shadow-blue-500/30 text-sm">
               <i class="fas fa-university"></i>
             </div>
             <span class="text-xl font-bold tracking-wide">VaultX</span>
@@ -337,30 +337,30 @@ function dashboardLayoutHTML(user) {
         </div>
         
         <div class="p-8 flex-1 overflow-y-auto">
-          <div class="text-xs font-semibold text-cream/70 tracking-wider uppercase mb-4">Main Menu</div>
+          <div class="text-xs font-semibold text-slate-200/70 tracking-wider uppercase mb-4">Main Menu</div>
           <nav class="space-y-2">
-            <button data-dtab="dashboard" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='dashboard'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-cream shadow-lg shadow-brass/20':'text-cream/70 hover:text-cream hover:bg-walnut'}">
+            <button data-dtab="dashboard" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='dashboard'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
               <i class="fas fa-home w-5 text-center"></i> 🏠 Overview
             </button>
-            <button data-dtab="deposit" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='deposit'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-cream shadow-lg shadow-brass/20':'text-cream/70 hover:text-cream hover:bg-walnut'}">
+            <button data-dtab="deposit" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='deposit'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
               <i class="fas fa-arrow-down w-5 text-center"></i> 💸 Make Deposit
             </button>
-            <button data-dtab="withdraw" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='withdraw'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-cream shadow-lg shadow-brass/20':'text-cream/70 hover:text-cream hover:bg-walnut'}">
+            <button data-dtab="withdraw" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='withdraw'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
               <i class="fas fa-arrow-up w-5 text-center"></i> 🏧 Withdraw Funds
             </button>
-            <button data-dtab="transfer" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='transfer'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-cream shadow-lg shadow-brass/20':'text-cream/70 hover:text-cream hover:bg-walnut'}">
+            <button data-dtab="transfer" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='transfer'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
               <i class="fas fa-exchange-alt w-5 text-center"></i> Transfer
             </button>
-            <button data-dtab="history" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='history'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-cream shadow-lg shadow-brass/20':'text-cream/70 hover:text-cream hover:bg-walnut'}">
+            <button data-dtab="history" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='history'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
               <i class="fas fa-history w-5 text-center"></i> 📜 History
             </button>
-            <button data-dtab="cards" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='cards'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-cream shadow-lg shadow-brass/20':'text-cream/70 hover:text-cream hover:bg-walnut'}">
+            <button data-dtab="cards" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='cards'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
               <i class="fas fa-credit-card w-5 text-center"></i> 💳 Virtual Cards
             </button>
-            <button data-dtab="loans" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='loans'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-cream shadow-lg shadow-brass/20':'text-cream/70 hover:text-cream hover:bg-walnut'}">
+            <button data-dtab="loans" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='loans'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
               <i class="fas fa-hand-holding-usd w-5 text-center"></i> 🏦 Loans
             </button>
-            <button data-dtab="settings" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='settings'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-cream shadow-lg shadow-brass/20':'text-cream/70 hover:text-cream hover:bg-walnut'}">
+            <button data-dtab="settings" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='settings'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
               <i class="fas fa-cog w-5 text-center"></i> ⚙️ Update Profile
             </button>
           </nav>
@@ -368,53 +368,53 @@ function dashboardLayoutHTML(user) {
         
         <div class="p-6 border-t border-white/10 shrink-0 bg-black/20">
           <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-full bg-walnut flex items-center justify-center font-bold border border-slate-700">
+            <div class="w-10 h-10 rounded-full bg-[#0f1115] flex items-center justify-center font-bold border border-slate-700">
               ${initial}
             </div>
             <div class="flex-1 min-w-0">
               <div class="text-sm font-semibold truncate">${esc(user.name)}</div>
-              <div class="text-xs text-cream/70 font-mono truncate">A/C: ${accNo}</div>
+              <div class="text-xs text-slate-200/70 font-mono truncate">A/C: ${accNo}</div>
             </div>
           </div>
-          <button id="logoutLink" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-rose-400 border border-ledgerline hover:bg-rose-500/100/10 hover:border-rose-500/30 transition-all font-medium text-sm">
+          <button id="logoutLink" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-rose-400 border border-slate-700 hover:bg-rose-500/100/10 hover:border-rose-500/30 transition-all font-medium text-sm">
             <i class="fas fa-sign-out-alt"></i> 🚪 Sign Out
           </button>
         </div>
       </aside>
       
       <!-- Mobile Topbar -->
-      <div class="md:hidden w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-cream h-16 flex items-center justify-between px-4 shrink-0 shadow-md">
-         <div class="flex items-center gap-2 font-bold"><i class="fas fa-university text-brass"></i> VaultX</div>
+      <div class="md:hidden w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 h-16 flex items-center justify-between px-4 shrink-0 shadow-md">
+         <div class="flex items-center gap-2 font-bold"><i class="fas fa-university text-amber-500"></i> VaultX</div>
          <button id="mobileLogout" class="text-xs bg-rose-500/100/20 text-rose-300 px-3 py-1.5 rounded"><i class="fas fa-sign-out-alt"></i></button>
       </div>
 
       <!-- Main Workspace -->
       <main class="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
         <!-- Dashboard Header -->
-        <header class="h-20 bg-cream/5 backdrop-blur-xl border-b border-white/10 px-8 flex items-center justify-between shrink-0 z-10 hidden md:flex">
+        <header class="h-20 bg-[#181b21]/5 backdrop-blur-xl border-b border-white/10 px-8 flex items-center justify-between shrink-0 z-10 hidden md:flex">
           <div>
-            <h1 class="text-2xl font-bold text-cream capitalize tracking-wide">👋 Good day, ${esc(user.name.split(' ')[0])}</h1>
-            <p class="text-sm text-navy/70">Here's your financial overview.</p>
+            <h1 class="text-2xl font-bold text-slate-200 capitalize tracking-wide">👋 Good day, ${esc(user.name.split(' ')[0])}</h1>
+            <p class="text-sm text-slate-100/70">Here's your financial overview.</p>
           </div>
           <div class="flex items-center gap-4">
-             <div class="px-4 py-2 bg-cream rounded-full text-sm font-medium text-cream/70 border border-white/10 shadow-inner">
-               Status: <span class="text-brass"><i class="fas fa-shield-check"></i> Secured</span>
+             <div class="px-4 py-2 bg-[#181b21] rounded-full text-sm font-medium text-slate-200/70 border border-white/10 shadow-inner">
+               Status: <span class="text-amber-500"><i class="fas fa-shield-check"></i> Secured</span>
              </div>
           </div>
         </header>
         
         <!-- Mobile Navigation Tabs -->
-        <div class="md:hidden flex overflow-x-auto bg-cream border-b border-white/10 shrink-0 px-2 py-2 gap-2">
-           <button data-dtab="dashboard" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='dashboard'?'bg-cream text-brass border border-amber-500/20':'text-cream/70'}">🏠 Overview</button>
-           <button data-dtab="deposit" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='deposit'?'bg-cream text-brass border border-amber-500/20':'text-cream/70'}">Deposit</button>
-           <button data-dtab="withdraw" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='withdraw'?'bg-cream text-brass border border-amber-500/20':'text-cream/70'}">Withdraw</button>
-           <button data-dtab="transfer" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='transfer'?'bg-cream text-brass border border-amber-500/20':'text-cream/70'}">Transfer</button>
-           <button data-dtab="history" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='history'?'bg-cream text-brass border border-amber-500/20':'text-cream/70'}">📜 History</button>
-           <button data-dtab="settings" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='settings'?'bg-cream text-brass border border-amber-500/20':'text-cream/70'}">Settings</button>
+        <div class="md:hidden flex overflow-x-auto bg-[#181b21] border-b border-white/10 shrink-0 px-2 py-2 gap-2">
+           <button data-dtab="dashboard" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='dashboard'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">🏠 Overview</button>
+           <button data-dtab="deposit" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='deposit'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">Deposit</button>
+           <button data-dtab="withdraw" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='withdraw'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">Withdraw</button>
+           <button data-dtab="transfer" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='transfer'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">Transfer</button>
+           <button data-dtab="history" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='history'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">📜 History</button>
+           <button data-dtab="settings" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='settings'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">Settings</button>
         </div>
 
         <!-- Scrollable Content -->
-        <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-cream/50">
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-[#181b21]/50">
           <div class="max-w-5xl mx-auto">
             ${renderDashPanel(user)}
           </div>
@@ -436,65 +436,65 @@ function renderDashPanel(user) {
           <!-- Balance & Card Section -->
           <div class="lg:col-span-2 space-y-8">
             <!-- Premium Virtual Card -->
-            <div class="glass-card rounded-3xl p-8 text-cream shadow-2xl shadow-slate-800/20 relative overflow-hidden">
+            <div class="glass-card rounded-3xl p-8 text-slate-200 shadow-2xl shadow-slate-800/20 relative overflow-hidden">
               <!-- Geometric overlay -->
               <div class="absolute -right-20 -top-20 w-64 h-64 border-[30px] border-white/5 rounded-full pointer-events-none"></div>
               <div class="absolute right-20 -bottom-20 w-48 h-48 border-[20px] border-white/5 rounded-full pointer-events-none"></div>
               
               <div class="flex justify-between items-start mb-10 relative z-10">
                 <div>
-                  <div class="text-navy/70 text-sm font-medium uppercase tracking-widest mb-1">Available Ledger Balance</div>
+                  <div class="text-slate-100/70 text-sm font-medium uppercase tracking-widest mb-1">Available Ledger Balance</div>
                   <div class="text-5xl font-bold font-mono tracking-tight flex items-baseline gap-2">
-                    <span class="text-3xl text-navy/70 font-sans font-normal">₹</span>${balance.toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                    <span class="text-3xl text-slate-100/70 font-sans font-normal">₹</span>${balance.toLocaleString('en-IN', {minimumFractionDigits: 2})}
                   </div>
                 </div>
-                <div class="bg-cream/10 p-3 rounded-2xl backdrop-blur-sm border border-white/20">
-                  <i class="fas fa-university text-3xl text-cream"></i>
+                <div class="bg-[#181b21]/10 p-3 rounded-2xl backdrop-blur-sm border border-white/20">
+                  <i class="fas fa-university text-3xl text-slate-200"></i>
                 </div>
               </div>
               
               <div class="flex justify-between items-end relative z-10">
                 <div class="space-y-1">
-                  <div class="text-navy/70 text-xs font-semibold uppercase tracking-wider">Account Holder</div>
+                  <div class="text-slate-100/70 text-xs font-semibold uppercase tracking-wider">Account Holder</div>
                   <div class="text-xl font-medium tracking-wide">${esc(user.name)}</div>
                 </div>
                 <div class="space-y-1 text-right">
-                  <div class="text-navy/70 text-xs font-semibold uppercase tracking-wider">Account Number</div>
-                  <div class="text-xl font-mono tracking-widest bg-cream/10 px-3 py-1 rounded border border-white/10">${esc(accNo)}</div>
+                  <div class="text-slate-100/70 text-xs font-semibold uppercase tracking-wider">Account Number</div>
+                  <div class="text-xl font-mono tracking-widest bg-[#181b21]/10 px-3 py-1 rounded border border-white/10">${esc(accNo)}</div>
                 </div>
               </div>
             </div>
 
             <!-- Quick Action Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <button data-dtab="deposit" class="bg-cream/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl border border-white/10 shadow-sm hover:shadow-md transition-all text-left group">
-                <div class="w-12 h-12 bg-cream text-emerald-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform mb-3">
+              <button data-dtab="deposit" class="bg-[#181b21]/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl border border-white/10 shadow-sm hover:shadow-md transition-all text-left group">
+                <div class="w-12 h-12 bg-[#181b21] text-emerald-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform mb-3">
                   <i class="fas fa-arrow-down"></i>
                 </div>
                 <h3 class="font-bold text-slate-100">Deposit</h3>
-                <p class="text-xs text-navy/70 mt-1">Add funds</p>
+                <p class="text-xs text-slate-100/70 mt-1">Add funds</p>
               </button>
-              <button data-dtab="withdraw" class="bg-cream/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl border border-white/10 shadow-sm hover:shadow-md transition-all text-left group">
+              <button data-dtab="withdraw" class="bg-[#181b21]/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl border border-white/10 shadow-sm hover:shadow-md transition-all text-left group">
                 <div class="w-12 h-12 bg-rose-500/100/20 text-rose-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform mb-3">
                   <i class="fas fa-arrow-up"></i>
                 </div>
                 <h3 class="font-bold text-slate-100">Withdraw</h3>
-                <p class="text-xs text-navy/70 mt-1">Remove funds</p>
+                <p class="text-xs text-slate-100/70 mt-1">Remove funds</p>
               </button>
-              <button data-dtab="transfer" class="bg-cream/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl border border-white/10 shadow-sm hover:shadow-md transition-all text-left group">
-                <div class="w-12 h-12 bg-cream text-cyan-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform mb-3">
+              <button data-dtab="transfer" class="bg-[#181b21]/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl border border-white/10 shadow-sm hover:shadow-md transition-all text-left group">
+                <div class="w-12 h-12 bg-[#181b21] text-cyan-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform mb-3">
                   <i class="fas fa-exchange-alt"></i>
                 </div>
                 <h3 class="font-bold text-slate-100">Transfer</h3>
-                <p class="text-xs text-navy/70 mt-1">Send to account</p>
+                <p class="text-xs text-slate-100/70 mt-1">Send to account</p>
               </button>
             </div>
           </div>
             
-            <div class="bg-gradient-to-br from-walnut to-mahogany rounded-2xl shadow-md p-6 text-cream text-center">
+            <div class="bg-gradient-to-br from-walnut to-mahogany rounded-2xl shadow-md p-6 text-slate-200 text-center">
               <i class="fas fa-shield-alt text-4xl text-blue-400 mb-4 block"></i>
               <h3 class="font-bold text-lg mb-2">VaultX Security</h3>
-              <p class="text-sm text-navy/70 leading-relaxed mb-4">Your account is protected by industry standard OOP data structures and rigorous logic checks.</p>
+              <p class="text-sm text-slate-100/70 leading-relaxed mb-4">Your account is protected by industry standard OOP data structures and rigorous logic checks.</p>
             </div>
           </div>
           
@@ -506,27 +506,27 @@ function renderDashPanel(user) {
   if (state.dashTab === 'deposit') {
     return `
       <div class="fade-in max-w-2xl mx-auto">
-        <div class="bg-cream/5 backdrop-blur-xl rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden">
-          <div class="bg-cream p-8 border-b border-emerald-500/20 flex items-center justify-between">
+        <div class="bg-[#181b21]/5 backdrop-blur-xl rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden">
+          <div class="bg-[#181b21] p-8 border-b border-emerald-500/20 flex items-center justify-between">
             <div>
               <h2 class="text-2xl font-bold text-emerald-800 mb-1">Deposit Funds</h2>
               <p class="text-emerald-400 text-sm">Securely add money to your ledger.</p>
             </div>
-            <div class="w-16 h-16 bg-cream rounded-full flex items-center justify-center shadow-sm text-3xl text-brass">
+            <div class="w-16 h-16 bg-[#181b21] rounded-full flex items-center justify-center shadow-sm text-3xl text-amber-500">
               <i class="fas fa-arrow-down"></i>
             </div>
           </div>
           <div class="p-8">
             <form id="depositForm" class="space-y-6">
               <div>
-                <label class="block text-sm font-bold text-cream/70 mb-2 uppercase tracking-wide">Amount to Deposit</label>
+                <label class="block text-sm font-bold text-slate-200/70 mb-2 uppercase tracking-wide">Amount to Deposit</label>
                 <div class="relative flex items-center">
-                  <span class="absolute left-6 text-2xl text-navy/70 font-light">₹</span>
-                  <input type="number" id="dep_amt" min="1" max="100000" placeholder="5000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-0 focus:border-emerald-500 outline-none text-3xl font-bold text-slate-100 transition-all font-mono">
+                  <span class="absolute left-6 text-2xl text-slate-100/70 font-light">₹</span>
+                  <input type="number" id="dep_amt" min="1" max="100000" placeholder="5000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-0 focus:border-emerald-500 outline-none text-3xl font-bold text-slate-100 transition-all font-mono">
                 </div>
-                <p class="text-xs text-navy/70 mt-3 flex items-center gap-1"><i class="fas fa-info-circle"></i> Maximum single deposit limit applies.</p>
+                <p class="text-xs text-slate-100/70 mt-3 flex items-center gap-1"><i class="fas fa-info-circle"></i> Maximum single deposit limit applies.</p>
               </div>
-              <button type="submit" class="w-full bg-brass text-walnut hover:brightness-110 font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-emerald-600/30 flex justify-center items-center gap-3 mt-4">
+              <button type="submit" class="w-full bg-amber-500 text-walnut hover:brightness-110 font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-emerald-600/30 flex justify-center items-center gap-3 mt-4">
                 Confirm Deposit <i class="fas fa-check"></i>
               </button>
             </form>
@@ -539,26 +539,26 @@ function renderDashPanel(user) {
   if (state.dashTab === 'withdraw') {
     return `
       <div class="fade-in max-w-2xl mx-auto">
-        <div class="bg-cream/5 backdrop-blur-xl rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden">
+        <div class="bg-[#181b21]/5 backdrop-blur-xl rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden">
           <div class="bg-rose-500/10 p-8 border-b border-rose-500/20 flex items-center justify-between">
             <div>
               <h2 class="text-2xl font-bold text-rose-800 mb-1">🏧 Withdraw Funds</h2>
               <p class="text-rose-600 text-sm">Available Balance: <span class="font-bold text-rose-700 font-mono text-base">₹${balance.toLocaleString('en-IN')}</span></p>
             </div>
-            <div class="w-16 h-16 bg-cream rounded-full flex items-center justify-center shadow-sm text-3xl text-rose-500">
+            <div class="w-16 h-16 bg-[#181b21] rounded-full flex items-center justify-center shadow-sm text-3xl text-rose-500">
               <i class="fas fa-arrow-up"></i>
             </div>
           </div>
           <div class="p-8">
             <form id="withdrawForm" class="space-y-6">
               <div>
-                <label class="block text-sm font-bold text-cream/70 mb-2 uppercase tracking-wide">Amount to Withdraw</label>
+                <label class="block text-sm font-bold text-slate-200/70 mb-2 uppercase tracking-wide">Amount to Withdraw</label>
                 <div class="relative flex items-center">
-                  <span class="absolute left-6 text-2xl text-navy/70 font-light">₹</span>
-                  <input type="number" id="wd_amt" min="1" max="${balance}" placeholder="2000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-0 focus:border-rose-500 outline-none text-3xl font-bold text-slate-100 transition-all font-mono">
+                  <span class="absolute left-6 text-2xl text-slate-100/70 font-light">₹</span>
+                  <input type="number" id="wd_amt" min="1" max="${balance}" placeholder="2000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-0 focus:border-rose-500 outline-none text-3xl font-bold text-slate-100 transition-all font-mono">
                 </div>
               </div>
-              <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-cream font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-rose-600/30 flex justify-center items-center gap-3 mt-4">
+              <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-slate-200 font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-rose-600/30 flex justify-center items-center gap-3 mt-4">
                 Confirm Withdrawal <i class="fas fa-shield-check"></i>
               </button>
             </form>
@@ -572,30 +572,30 @@ function renderDashPanel(user) {
   if (state.dashTab === 'transfer') {
     return `
       <div class="fade-in max-w-2xl mx-auto">
-        <div class="bg-cream/5 backdrop-blur-xl rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden">
+        <div class="bg-[#181b21]/5 backdrop-blur-xl rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden">
           <div class="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 p-8 border-b border-white/10 flex items-center justify-between">
             <div>
               <h2 class="text-2xl font-bold text-indigo-800 mb-1">Transfer Funds</h2>
               <p class="text-cyan-400 text-sm">Instantly send money to another account.</p>
             </div>
-            <div class="w-16 h-16 bg-cream rounded-full flex items-center justify-center shadow-sm text-3xl text-indigo-500">
+            <div class="w-16 h-16 bg-[#181b21] rounded-full flex items-center justify-center shadow-sm text-3xl text-indigo-500">
               <i class="fas fa-exchange-alt"></i>
             </div>
           </div>
           <div class="p-8">
             <form id="transferForm" class="space-y-6">
               <div>
-                <label class="block text-sm font-bold text-cream/70 mb-2 uppercase tracking-wide">Target Account No / Email</label>
-                <input type="text" id="tr_target" placeholder="Recipient's info" required class="w-full px-5 py-4 rounded-xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-0 focus:border-brass outline-none text-lg font-medium text-slate-100 transition-all">
+                <label class="block text-sm font-bold text-slate-200/70 mb-2 uppercase tracking-wide">Target Account No / Email</label>
+                <input type="text" id="tr_target" placeholder="Recipient's info" required class="w-full px-5 py-4 rounded-xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-0 focus:border-brass outline-none text-lg font-medium text-slate-100 transition-all">
               </div>
               <div>
-                <label class="block text-sm font-bold text-cream/70 mb-2 uppercase tracking-wide">Amount to Transfer</label>
+                <label class="block text-sm font-bold text-slate-200/70 mb-2 uppercase tracking-wide">Amount to Transfer</label>
                 <div class="relative flex items-center">
-                  <span class="absolute left-6 text-2xl text-navy/70 font-light">₹</span>
-                  <input type="number" id="tr_amt" min="1" max="${balance}" placeholder="1000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-0 focus:border-brass outline-none text-3xl font-bold text-slate-100 transition-all font-mono">
+                  <span class="absolute left-6 text-2xl text-slate-100/70 font-light">₹</span>
+                  <input type="number" id="tr_amt" min="1" max="${balance}" placeholder="1000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-0 focus:border-brass outline-none text-3xl font-bold text-slate-100 transition-all font-mono">
                 </div>
               </div>
-              <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-400 hover:to-pink-500 text-cream font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-brass/20 flex justify-center items-center gap-3 mt-4">
+              <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-400 hover:to-pink-500 text-slate-200 font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-brass/20 flex justify-center items-center gap-3 mt-4">
                 Confirm Transfer <i class="fas fa-paper-plane"></i>
               </button>
             </form>
@@ -608,8 +608,8 @@ function renderDashPanel(user) {
   if (state.dashTab === 'history') {
     const txs = user.transactions || [];
     const rows = txs.map(t => `
-      <tr class="border-b border-white/5 hover:bg-cream/10 transition-colors">
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-navy/70">${t.date}</td>
+      <tr class="border-b border-white/5 hover:bg-[#181b21]/10 transition-colors">
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-100/70">${t.date}</td>
         <td class="px-6 py-4 whitespace-nowrap">
           <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
             ${t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? 'bg-emerald-100 text-emerald-800' : 
@@ -617,8 +617,8 @@ function renderDashPanel(user) {
             ${t.type}
           </span>
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-cream/70">${t.detail || ''}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-right ${t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? 'text-emerald-400' : t.type==='CREATE'?'text-navy/70':'text-rose-600'}">
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-200/70">${t.detail || ''}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-right ${t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? 'text-emerald-400' : t.type==='CREATE'?'text-slate-100/70':'text-rose-600'}">
           ${t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? '+' : t.type==='CREATE'?'':'-'}₹${t.amount.toLocaleString('en-IN')}
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-slate-100 text-right">
@@ -629,24 +629,24 @@ function renderDashPanel(user) {
     
     return `
       <div class="fade-in max-w-5xl mx-auto">
-        <div class="bg-cream/5 backdrop-blur-xl rounded-3xl shadow-lg border border-white/10 overflow-hidden">
-          <div class="bg-cream/5 p-6 border-b border-white/10 flex justify-between items-center">
-            <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2"><i class="fas fa-history text-navy/70"></i> Transaction 📜 History</h3>
-            <span class="text-sm font-medium text-navy/70">${txs.length} total records</span>
+        <div class="bg-[#181b21]/5 backdrop-blur-xl rounded-3xl shadow-lg border border-white/10 overflow-hidden">
+          <div class="bg-[#181b21]/5 p-6 border-b border-white/10 flex justify-between items-center">
+            <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2"><i class="fas fa-history text-slate-100/70"></i> Transaction 📜 History</h3>
+            <span class="text-sm font-medium text-slate-100/70">${txs.length} total records</span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full">
-              <thead class="bg-cream border-b border-white/10">
+              <thead class="bg-[#181b21] border-b border-white/10">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-bold text-navy/70 uppercase tracking-wider">Date/Time</th>
-                  <th class="px-6 py-3 text-left text-xs font-bold text-navy/70 uppercase tracking-wider">Type</th>
-                  <th class="px-6 py-3 text-left text-xs font-bold text-navy/70 uppercase tracking-wider">Details</th>
-                  <th class="px-6 py-3 text-right text-xs font-bold text-navy/70 uppercase tracking-wider">Amount</th>
-                  <th class="px-6 py-3 text-right text-xs font-bold text-navy/70 uppercase tracking-wider">Balance</th>
+                  <th class="px-6 py-3 text-left text-xs font-bold text-slate-100/70 uppercase tracking-wider">Date/Time</th>
+                  <th class="px-6 py-3 text-left text-xs font-bold text-slate-100/70 uppercase tracking-wider">Type</th>
+                  <th class="px-6 py-3 text-left text-xs font-bold text-slate-100/70 uppercase tracking-wider">Details</th>
+                  <th class="px-6 py-3 text-right text-xs font-bold text-slate-100/70 uppercase tracking-wider">Amount</th>
+                  <th class="px-6 py-3 text-right text-xs font-bold text-slate-100/70 uppercase tracking-wider">Balance</th>
                 </tr>
               </thead>
               <tbody class="bg-transparent">
-                ${rows.length ? rows : '<tr><td colspan="5" class="px-6 py-10 text-center text-navy/70">No transactions found.</td></tr>'}
+                ${rows.length ? rows : '<tr><td colspan="5" class="px-6 py-10 text-center text-slate-100/70">No transactions found.</td></tr>'}
               </tbody>
             </table>
           </div>
@@ -662,24 +662,24 @@ function renderDashPanel(user) {
         <div class="flex items-center justify-between">
           <div>
             <h2 class="text-2xl font-bold text-slate-100">Your 💳 Virtual Cards</h2>
-            <p class="text-navy/70 text-sm">Manage your debit and credit cards securely.</p>
+            <p class="text-slate-100/70 text-sm">Manage your debit and credit cards securely.</p>
           </div>
-          <button onclick="requestNewCard()" class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-cream rounded-lg text-sm font-bold hover:bg-walnut transition-colors shadow-lg active:scale-95">
+          <button onclick="requestNewCard()" class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 rounded-lg text-sm font-bold hover:bg-[#0f1115] transition-colors shadow-lg active:scale-95">
             <i class="fas fa-plus"></i> Request New Card
           </button>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <!-- Card 1 -->
-          <div class="relative w-full h-56 bg-gradient-to-br from-walnut to-mahogany rounded-3xl p-6 text-cream shadow-2xl overflow-hidden flex flex-col justify-between group">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-cream opacity-5 rounded-full -mr-20 -mt-20 group-hover:scale-110 transition-transform duration-700"></div>
+          <div class="relative w-full h-56 bg-gradient-to-br from-walnut to-mahogany rounded-3xl p-6 text-slate-200 shadow-2xl overflow-hidden flex flex-col justify-between group">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-[#181b21] opacity-5 rounded-full -mr-20 -mt-20 group-hover:scale-110 transition-transform duration-700"></div>
             <div class="flex justify-between items-start relative z-10">
-              <div class="text-lg font-bold tracking-widest text-cream/70">VaultX <span class="text-cream">PLATINUM</span></div>
+              <div class="text-lg font-bold tracking-widest text-slate-200/70">VaultX <span class="text-slate-200">PLATINUM</span></div>
               <i class="fas fa-wifi text-xl opacity-80"></i>
             </div>
             <div class="relative z-10">
               <div class="font-mono text-2xl tracking-[0.2em] mb-2 shadow-sm">${user.card_number ? user.card_number.match(/.{1,4}/g).join(' ') : '4532 9912 **** ' + String(accNo).substring(0,4).padEnd(4,'8')}</div>
-              <div class="flex justify-between text-xs font-medium uppercase tracking-widest text-cream/70">
+              <div class="flex justify-between text-xs font-medium uppercase tracking-widest text-slate-200/70">
                 <span>${esc(user.name)}</span>
                 <span class="flex items-center gap-4">
                   <span>CVV: ***</span>
@@ -690,31 +690,31 @@ function renderDashPanel(user) {
           </div>
           
           <!-- Card Controls -->
-          <div class="bg-cream/5 backdrop-blur-xl p-6 rounded-3xl shadow-lg border border-white/10">
+          <div class="bg-[#181b21]/5 backdrop-blur-xl p-6 rounded-3xl shadow-lg border border-white/10">
             <h3 class="font-bold text-slate-100 mb-4">Card Settings</h3>
             <div class="space-y-4">
-              <div class="flex items-center justify-between p-4 bg-cream rounded-xl border border-white/5">
+              <div class="flex items-center justify-between p-4 bg-[#181b21] rounded-xl border border-white/5">
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-400 flex items-center justify-center"><i class="fas fa-snowflake"></i></div>
                   <div>
                     <div class="font-bold text-slate-100 text-sm">Freeze Card</div>
-                    <div class="text-xs text-navy/70">Temporarily lock all transactions</div>
+                    <div class="text-xs text-slate-100/70">Temporarily lock all transactions</div>
                   </div>
                 </div>
                 <div class="w-12 h-6 bg-slate-300 rounded-full relative cursor-pointer hover:bg-slate-400 transition-colors">
-                  <div class="w-5 h-5 bg-cream rounded-full absolute top-0.5 left-0.5 shadow-sm"></div>
+                  <div class="w-5 h-5 bg-[#181b21] rounded-full absolute top-0.5 left-0.5 shadow-sm"></div>
                 </div>
               </div>
-              <div class="flex items-center justify-between p-4 bg-cream rounded-xl border border-white/5">
+              <div class="flex items-center justify-between p-4 bg-[#181b21] rounded-xl border border-white/5">
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-amber-500/20 text-brass flex items-center justify-center"><i class="fas fa-plane"></i></div>
+                  <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center"><i class="fas fa-plane"></i></div>
                   <div>
                     <div class="font-bold text-slate-100 text-sm">International Usage</div>
-                    <div class="text-xs text-navy/70">Enable foreign transactions</div>
+                    <div class="text-xs text-slate-100/70">Enable foreign transactions</div>
                   </div>
                 </div>
-                <div class="w-12 h-6 bg-cream0 rounded-full relative cursor-pointer hover:bg-gradient-to-r from-cyan-500 to-blue-600 transition-colors">
-                  <div class="w-5 h-5 bg-cream rounded-full absolute top-0.5 right-0.5 shadow-sm"></div>
+                <div class="w-12 h-6 bg-[#181b21]0 rounded-full relative cursor-pointer hover:bg-gradient-to-r from-cyan-500 to-blue-600 transition-colors">
+                  <div class="w-5 h-5 bg-[#181b21] rounded-full absolute top-0.5 right-0.5 shadow-sm"></div>
                 </div>
               </div>
             </div>
@@ -729,26 +729,26 @@ function renderDashPanel(user) {
       <div class="fade-in max-w-4xl mx-auto space-y-6">
         <div>
           <h2 class="text-2xl font-bold text-slate-100">Loan Center</h2>
-          <p class="text-navy/70 text-sm">Instant pre-approved loans with competitive interest rates.</p>
+          <p class="text-slate-100/70 text-sm">Instant pre-approved loans with competitive interest rates.</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-cream/5 border border-white/10 p-6 rounded-3xl">
+          <div class="bg-[#181b21]/5 border border-white/10 p-6 rounded-3xl">
             <h3 class="font-bold text-cyan-300 mb-1">Personal Loan</h3>
             <div class="text-cyan-400 text-2xl font-bold mb-4">Up to ₹5,00,000</div>
             <p class="text-sm text-cyan-200/80 mb-6">Rates starting at 10.5% p.a. Minimal documentation required.</p>
-            <button class="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-cream py-2 rounded-xl text-sm font-bold shadow-md hover:from-purple-400 hover:to-pink-500 transition-colors">Apply Now</button>
+            <button class="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-slate-200 py-2 rounded-xl text-sm font-bold shadow-md hover:from-purple-400 hover:to-pink-500 transition-colors">Apply Now</button>
           </div>
-          <div class="bg-cream/5 border border-white/10 p-6 rounded-3xl">
+          <div class="bg-[#181b21]/5 border border-white/10 p-6 rounded-3xl">
             <h3 class="font-bold text-emerald-300 mb-1">Home Loan</h3>
             <div class="text-emerald-400 text-2xl font-bold mb-4">Up to ₹2 Crores</div>
             <p class="text-sm text-emerald-200/80 mb-6">Rates starting at 8.3% p.a. Flexible repayment tenure up to 30 years.</p>
-            <button class="w-full bg-brass text-walnut text-cream py-2 rounded-xl text-sm font-bold shadow-md hover:brightness-110 transition-colors">Calculate EMI</button>
+            <button class="w-full bg-amber-500 text-walnut text-slate-200 py-2 rounded-xl text-sm font-bold shadow-md hover:brightness-110 transition-colors">Calculate EMI</button>
           </div>
-          <div class="bg-cream border border-white/10 p-6 rounded-3xl shadow-sm flex flex-col justify-center items-center text-center">
-            <div class="w-16 h-16 bg-cream/10 text-cream/70 rounded-full flex items-center justify-center text-2xl mb-4"><i class="fas fa-file-invoice-dollar"></i></div>
+          <div class="bg-[#181b21] border border-white/10 p-6 rounded-3xl shadow-sm flex flex-col justify-center items-center text-center">
+            <div class="w-16 h-16 bg-[#181b21]/10 text-slate-200/70 rounded-full flex items-center justify-center text-2xl mb-4"><i class="fas fa-file-invoice-dollar"></i></div>
             <h3 class="font-bold text-slate-100">No Active 🏦 Loans</h3>
-            <p class="text-sm text-navy/70 mt-2">You currently do not have any active loans linked to this account.</p>
+            <p class="text-sm text-slate-100/70 mt-2">You currently do not have any active loans linked to this account.</p>
           </div>
         </div>
       </div>
@@ -758,29 +758,29 @@ function renderDashPanel(user) {
   if (state.dashTab === 'settings') {
     return `
       <div class="fade-in max-w-4xl mx-auto space-y-8">
-        <div class="bg-cream rounded-3xl shadow-md border border-white/10 overflow-hidden">
-          <div class="bg-cream/5 p-6 border-b border-white/10">
-            <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2"><i class="fas fa-user-edit text-brass"></i> Modify Account Information</h3>
+        <div class="bg-[#181b21] rounded-3xl shadow-md border border-white/10 overflow-hidden">
+          <div class="bg-[#181b21]/5 p-6 border-b border-white/10">
+            <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2"><i class="fas fa-user-edit text-amber-500"></i> Modify Account Information</h3>
           </div>
           <div class="p-8">
             <form id="updateForm" class="space-y-6">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label class="block text-sm font-bold text-cream/70 mb-2">Full Name</label>
-                  <input type="text" id="up_name" placeholder="${esc(user.name)}" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none transition-shadow bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400">
+                  <label class="block text-sm font-bold text-slate-200/70 mb-2">Full Name</label>
+                  <input type="text" id="up_name" placeholder="${esc(user.name)}" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none transition-shadow bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400">
                 </div>
                 <div>
-                  <label class="block text-sm font-bold text-cream/70 mb-2">Email Address</label>
-                  <input type="email" id="up_email" placeholder="${esc(user.email)}" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none transition-shadow bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400">
+                  <label class="block text-sm font-bold text-slate-200/70 mb-2">Email Address</label>
+                  <input type="email" id="up_email" placeholder="${esc(user.email)}" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none transition-shadow bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400">
                 </div>
               </div>
               <div class="max-w-xs">
-                <label class="block text-sm font-bold text-cream/70 mb-2">New 4-Digit PIN</label>
-                <input type="password" id="up_pin" maxlength="4" placeholder="••••" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none transition-shadow bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 text-xl tracking-widest font-mono">
-                <p class="text-xs text-navy/70 mt-2">Leave blank to keep current PIN.</p>
+                <label class="block text-sm font-bold text-slate-200/70 mb-2">New 4-Digit PIN</label>
+                <input type="password" id="up_pin" maxlength="4" placeholder="••••" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none transition-shadow bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 text-xl tracking-widest font-mono">
+                <p class="text-xs text-slate-100/70 mt-2">Leave blank to keep current PIN.</p>
               </div>
               <div class="pt-4">
-                <button type="submit" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-cream font-medium py-3 px-8 rounded-xl transition-all shadow-md shadow-brass/20">
+                <button type="submit" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-200 font-medium py-3 px-8 rounded-xl transition-all shadow-md shadow-brass/20">
                   Save Changes
                 </button>
               </div>
@@ -788,16 +788,16 @@ function renderDashPanel(user) {
           </div>
         </div>
 
-        <div class="bg-cream rounded-3xl shadow-md border border-rose-200 overflow-hidden">
+        <div class="bg-[#181b21] rounded-3xl shadow-md border border-rose-200 overflow-hidden">
           <div class="bg-rose-500/10 p-6 border-b border-rose-200">
             <h3 class="text-xl font-bold text-rose-800 flex items-center gap-2"><i class="fas fa-exclamation-triangle text-rose-600"></i> Terminate Account</h3>
           </div>
           <div class="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <p class="text-slate-100 font-medium mb-1">Permanently delete your VaultX profile.</p>
-              <p class="text-sm text-navy/70 max-w-lg">Once you delete your account, all your records, including your balance ledger, will be permanently erased. This action cannot be undone.</p>
+              <p class="text-sm text-slate-100/70 max-w-lg">Once you delete your account, all your records, including your balance ledger, will be permanently erased. This action cannot be undone.</p>
             </div>
-            <button id="deleteBtn" class="shrink-0 bg-cream border-2 border-rose-600 text-rose-600 hover:bg-rose-600 hover:text-cream font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2">
+            <button id="deleteBtn" class="shrink-0 bg-[#181b21] border-2 border-rose-600 text-rose-600 hover:bg-rose-600 hover:text-slate-200 font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2">
               <i class="fas fa-trash-alt"></i> Delete Account
             </button>
           </div>
@@ -1007,17 +1007,17 @@ render();
   <!-- Chat Window -->
   <div id="chat-window" class="hidden w-80 sm:w-96 bg-[#0f172a]/90 backdrop-blur-2xl border-white/10 rounded-2xl shadow-2xl border border-white/10 mb-4 overflow-hidden flex-col h-[500px] max-h-[80vh] fade-in">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-cyan-500 to-blue-600 text-cream p-4 flex justify-between items-center shrink-0">
+    <div class="bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 p-4 flex justify-between items-center shrink-0">
       <div class="flex items-center gap-2">
         <div class="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center">
           <i class="fas fa-robot text-sm"></i>
         </div>
         <div>
           <h4 class="font-bold text-sm">VaultX Assistant</h4>
-          <p class="text-[10px] text-cream/70">Powered by Gemini AI</p>
+          <p class="text-[10px] text-slate-200/70">Powered by Gemini AI</p>
         </div>
       </div>
-      <button onclick="toggleChat()" class="text-navy/70 hover:text-cream transition-colors">
+      <button onclick="toggleChat()" class="text-slate-100/70 hover:text-slate-200 transition-colors">
         <i class="fas fa-times"></i>
       </button>
     </div>
@@ -1025,15 +1025,15 @@ render();
     <!-- Messages Area -->
     <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-transparent flex flex-col gap-3 text-sm">
       <div class="flex justify-start">
-        <div class="bg-cream border border-ledgerline text-sage font-handwriting text-2xl font-bold p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] leading-relaxed">Hello! I am your VaultX AI Assistant. How can I help you today?</div>
+        <div class="bg-[#181b21] border border-slate-700 text-emerald-500 font-handwriting text-2xl font-bold p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] leading-relaxed">Hello! I am your VaultX AI Assistant. How can I help you today?</div>
       </div>
     </div>
     
     <!-- Input Area -->
-    <div class="p-3 bg-cream border-t border-white/5 shrink-0">
+    <div class="p-3 bg-[#181b21] border-t border-white/5 shrink-0">
       <form id="chat-form" class="relative flex items-center">
-        <input type="text" id="chat-input" autocomplete="off" placeholder="Ask something..." required class="w-full pl-4 pr-12 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-cream placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-brass outline-none transition-all">
-        <button type="submit" class="absolute right-2 w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 text-cream rounded-lg flex items-center justify-center hover:from-cyan-400 hover:to-blue-500 transition-colors shadow-sm">
+        <input type="text" id="chat-input" autocomplete="off" placeholder="Ask something..." required class="w-full pl-4 pr-12 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-brass outline-none transition-all">
+        <button type="submit" class="absolute right-2 w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 rounded-lg flex items-center justify-center hover:from-cyan-400 hover:to-blue-500 transition-colors shadow-sm">
           <i class="fas fa-paper-plane text-xs"></i>
         </button>
       </form>
@@ -1041,7 +1041,7 @@ render();
   </div>
   
   <!-- Floating Toggle Button -->
-  <button id="chat-toggle" onclick="toggleChat()" class="w-14 h-14 bg-walnut hover:bg-walnut text-cream rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110 active:scale-95 group">
+  <button id="chat-toggle" onclick="toggleChat()" class="w-14 h-14 bg-[#0f1115] hover:bg-[#0f1115] text-slate-200 rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110 active:scale-95 group">
     <i class="fas fa-comment-dots text-2xl group-hover:hidden"></i>
     <i class="fas fa-robot text-2xl hidden group-hover:block"></i>
   </button>
@@ -1076,7 +1076,7 @@ render();
           // Add User Message
           messagesArea.innerHTML += `
             <div class="flex justify-end">
-              <div class="bg-navy text-cream p-3 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] leading-relaxed font-sans">
+              <div class="bg-navy text-slate-200 p-3 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] leading-relaxed font-sans">
                 ${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
               </div>
             </div>
@@ -1087,7 +1087,7 @@ render();
           const loadId = 'loading-' + Date.now();
           messagesArea.innerHTML += `
             <div id="${loadId}" class="flex justify-start">
-              <div class="bg-cream border border-white/10 text-navy/70 p-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-2">
+              <div class="bg-[#181b21] border border-white/10 text-slate-100/70 p-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-2">
                 <i class="fas fa-circle-notch fa-spin"></i> Thinking...
               </div>
             </div>
@@ -1108,7 +1108,7 @@ render();
             // Add Bot Message
             messagesArea.innerHTML += `
               <div class="flex justify-start">
-                <div class="bg-cream border border-ledgerline text-sage font-handwriting text-2xl font-bold p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] leading-relaxed whitespace-pre-wrap">
+                <div class="bg-[#181b21] border border-slate-700 text-emerald-500 font-handwriting text-2xl font-bold p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] leading-relaxed whitespace-pre-wrap">
                   ${data.reply ? data.reply.replace(/</g, "&lt;").replace(/>/g, "&gt;") : "Error connecting to AI."}
                 </div>
               </div>
