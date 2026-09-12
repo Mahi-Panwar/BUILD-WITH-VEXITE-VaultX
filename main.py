@@ -93,6 +93,11 @@ def apply_loan(req: LoanRequest):
     ok, msg = Bank.apply_loan(req.accountNo, req.pin, req.loanType, req.amount)
     return {"ok": ok, "msg": msg}
 
+@app.post("/api/new_card")
+def new_card(req: AuthRequest):
+    ok, msg = Bank.generate_new_card(req.accountNo, req.pin)
+    return {"ok": ok, "msg": msg}
+
 @app.post("/api/update")
 def update(req: UpdateRequest):
     ok, msg = Bank.update_user(req.accountNo, req.pin, req.name, req.email, req.newPin, req.phone, req.address)

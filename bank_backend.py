@@ -207,6 +207,21 @@ class Bank:
                 return True, f"Loan of Rs. {amount} approved and credited to your account!"
         return False, "Invalid account number or PIN."
 
+
+    @classmethod
+    def generate_new_card(cls, acc_no, pin):
+        accounts = cls._load_data()
+        for a in accounts:
+            a_acc = a.get("accountNo") or a.get("accountNo.")
+            if a_acc == acc_no and a.get("pin") == int(pin):
+                import random
+                a["card_number"] = "4532" + "".join([str(random.randint(0,9)) for _ in range(12)])
+                a["expiry"] = f"{random.randint(1,12):02d}/{random.randint(26,30)}"
+                a["cvv"] = "".join([str(random.randint(0,9)) for _ in range(3)])
+                cls._save_data(accounts)
+                return True, "New card generated."
+        return False, "Authentication failed."
+
     @classmethod
     def update_user(cls, acc_no, pin, name, email, new_pin, phone=None, address=None):
         accounts = cls._load_data()

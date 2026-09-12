@@ -45,7 +45,11 @@
         "email": "panwarmahi@gmail.com",
         "pin": 1331,
         "accountNo": "W6^51AZ",
-        "balance": 0
+        "balance": 0,
+        "card_number": "4532066641849512",
+        "expiry": "02/26",
+        "cvv": "131",
+        "loans": []
     },
     {
         "name": "mahi panwar",
