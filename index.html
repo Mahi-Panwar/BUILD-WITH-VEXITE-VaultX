@@ -649,10 +649,13 @@ function renderDashPanel(user) {
               <i class="fas fa-wifi text-xl opacity-80"></i>
             </div>
             <div class="relative z-10">
-              <div class="font-mono text-2xl tracking-[0.2em] mb-2 shadow-sm">4532 9912 **** ${String(accNo).substring(0,4).padEnd(4,'8')}</div>
+              <div class="font-mono text-2xl tracking-[0.2em] mb-2 shadow-sm">${user.card_number ? user.card_number.match(/.{1,4}/g).join(' ') : '4532 9912 **** ' + String(accNo).substring(0,4).padEnd(4,'8')}</div>
               <div class="flex justify-between text-xs font-medium uppercase tracking-widest text-slate-300">
                 <span>${esc(user.name)}</span>
-                <span>12/29</span>
+                <span class="flex items-center gap-4">
+                  <span>CVV: ***</span>
+                  <span>EXP: ${user.expiry || '12/29'}</span>
+                </span>
               </div>
             </div>
           </div>

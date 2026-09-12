@@ -79,8 +79,19 @@ class TransferRequest(BaseModel):
     targetAccount: str
     amount: int
 
+class LoanRequest(BaseModel):
+    accountNo: str
+    pin: str
+    loanType: str
+    amount: int
+
 class ChatRequest(BaseModel):
     message: str
+
+@app.post("/api/loan")
+def apply_loan(req: LoanRequest):
+    ok, msg = Bank.apply_loan(req.accountNo, req.pin, req.loanType, req.amount)
+    return {"ok": ok, "msg": msg}
 
 @app.post("/api/update")
 def update(req: UpdateRequest):
