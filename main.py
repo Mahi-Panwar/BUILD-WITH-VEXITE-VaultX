@@ -70,6 +70,23 @@ def login(req: AuthRequest):
         return {"ok": True, "user": user}
     return {"ok": False, "msg": "No account found with that account number and PIN."}
 
+@app.post("/api/balance")
+@app.post("/balance")
+def check_balance(req: AuthRequest):
+    user = Bank.find_user(req.accountNo, req.pin)
+    if user:
+        return {
+            "ok": True,
+            "accountNo": user.get("accountNo") or user.get("accountNo."),
+            "name": user.get("name"),
+            "balance": user.get("balance", 0),
+            "acc_type": user.get("acc_type", "Savings"),
+            "email": user.get("email"),
+            "phone": user.get("phone", ""),
+            "transactions": user.get("transactions", [])[-3:]
+        }
+    return {"ok": False, "msg": "Authentication failed. Invalid Account Number or PIN."}
+
 @app.post("/api/deposit")
 @app.post("/deposit")
 def deposit(req: DepositWithdrawRequest):
