@@ -71,12 +71,20 @@ async function apiCall(endpoint, payload) {
   try {
     const isFile = window.location.protocol === 'file:';
     const baseUrl = isFile ? 'http://127.0.0.1:8000' : '';
-    const url = endpoint.startsWith('http') ? endpoint : baseUrl + endpoint;
-    const res = await fetch(url, {
+    let url = endpoint.startsWith('http') ? endpoint : baseUrl + endpoint;
+    let res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+    if (res.status === 404 && endpoint.startsWith('/api/')) {
+      const fallbackUrl = baseUrl + endpoint.replace('/api/', '/');
+      res = await fetch(fallbackUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    }
     return await res.json();
   } catch (err) {
     return { ok: false, msg: 'Network error or server down.' };
