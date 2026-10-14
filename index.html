@@ -3,1087 +3,1391 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VaultX Bank Manager</title>
+  <title>VaultX - Python OOP Bank Management System</title>
+  
+  <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          walnut: '#2B211A',
-          mahogany: '#3E2F22',
-          cream: '#F3ECDC',
-          navy: '#1B2740',
-          brass: '#C89B4A',
-          sage: '#5C7A63',
-          ledgerline: '#E5D6C1'
-        },
-        fontFamily: {
-          serif: ['"Playfair Display"', 'Georgia', 'serif'],
-          mono: ['"Courier Prime"', '"Courier New"', 'monospace'],
-          sans: ['"Playfair Display"', 'serif'],
-          handwriting: ['"Caveat"', 'cursive'],
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            vault: {
+              950: '#070412',
+              900: '#0C0721',
+              850: '#120A30',
+              800: '#180E3D',
+              700: '#231454',
+              600: '#341C7A',
+              accent: '#8B5CF6',
+              glow: '#A855F7',
+              neon: '#C084FC',
+              cyan: '#06B6D4',
+              gold: '#FBBF24',
+              emerald: '#10B981',
+              rose: '#F43F5E'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Fira Code"', 'monospace'],
+            handwriting: ['"Caveat"', 'cursive']
+          }
         }
       }
     }
-  }
-</script>
-<style>
-  body { font-family: 'Playfair Display', serif; }
-  .bg-[#181b21] { background: repeating-linear-gradient(transparent, transparent 31px, #E5D6C1 31px, #E5D6C1 32px); }
-</style>
+  </script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { font-family: 'Inter', sans-serif;  }
-    .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .glass-card { background: linear-gradient(135deg, #0f172a 0%, #334155 100%); }
-    .toast-enter { animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-    @keyframes toastIn { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
-    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #070412;
+      color: #E2E8F0;
+      overflow-x: hidden;
+    }
+
+    /* Animated Ambient Glows */
+    .glow-purple {
+      background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.18), transparent 70%);
+    }
+    .glow-cyan {
+      background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15), transparent 70%);
+    }
+
+    /* Glass Cards */
+    .glass-card {
+      background: linear-gradient(135deg, rgba(24, 14, 61, 0.75) 0%, rgba(12, 7, 33, 0.85) 100%);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(168, 85, 247, 0.18);
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(168, 85, 247, 0.4);
+      transform: translateY(-2px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Neon Bank Card */
+    .bank-card-gradient {
+      background: linear-gradient(135deg, #2D1460 0%, #150B32 50%, #0A051A 100%);
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      box-shadow: 0 15px 35px -5px rgba(139, 92, 246, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Custom Toast */
+    .toast-anim {
+      animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes toastSlideIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Code Window Aesthetic */
+    .ide-window {
+      background: #0E0822;
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(139, 92, 246, 0.15);
+    }
+
     /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #070412; }
+    ::-webkit-scrollbar-thumb { background: #231454; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #8B5CF6; }
   </style>
 </head>
-<body class="bg-[#0f1115] text-slate-200 antialiased min-h-screen flex flex-col m-0 p-0">
+<body class="min-h-screen flex flex-col antialiased selection:bg-purple-600 selection:text-white">
 
-<div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3"></div>
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-[120] flex flex-col gap-3 pointer-events-none"></div>
 
-<div id="app" class="w-full min-h-screen flex flex-col flex-1">
-  <!-- UI rendered here by JS -->
-</div>
+  <!-- Dynamic Application Root -->
+  <div id="app" class="w-full min-h-screen flex flex-col flex-1"></div>
 
-<script>
-let state = {
-  user: null,           
-  sessionPin: null,
-  authTab: 'landing',      
-  dashTab: 'dashboard'
-};
+  <!-- Dynamic Client-Side Logic -->
+  <script>
+    let state = {
+      user: null,
+      sessionPin: null,
+      authTab: 'landing', // 'landing' | 'login' | 'create'
+      dashTab: 'dashboard' // 'dashboard' | 'deposit' | 'withdraw' | 'transfer' | 'history' | 'cards' | 'loans' | 'settings'
+    };
 
-async function apiCall(endpoint, payload) {
-  try {
-    const isFile = window.location.protocol === 'file:';
-    const baseUrl = isFile ? 'http://127.0.0.1:8000' : '';
-    let url = endpoint.startsWith('http') ? endpoint : baseUrl + endpoint;
-    let res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (res.status === 404 && endpoint.startsWith('/api/')) {
-      const fallbackUrl = baseUrl + endpoint.replace('/api/', '/');
-      res = await fetch(fallbackUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+    // Resilient API Caller (supports clean paths, /api/ prefix, and fallback)
+    async function apiCall(endpoint, payload) {
+      try {
+        const isFile = window.location.protocol === 'file:';
+        const baseUrl = isFile ? 'http://127.0.0.1:8000' : '';
+        let url = endpoint.startsWith('http') ? endpoint : baseUrl + endpoint;
+        
+        let res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        // 404 auto-fallback: if /api/route returns 404, fallback to /route
+        if (res.status === 404 && endpoint.startsWith('/api/')) {
+          const fallbackUrl = baseUrl + endpoint.replace('/api/', '/');
+          res = await fetch(fallbackUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+        
+        return await res.json();
+      } catch (err) {
+        return { ok: false, msg: 'Network error or server down. Please try again.' };
+      }
     }
-    return await res.json();
-  } catch (err) {
-    return { ok: false, msg: 'Network error or server down.' };
-  }
-}
 
-async function refreshUser() {
-  if (!state.user) return;
-  const accNo = state.user.accountNo || state.user['accountNo.'];
-  const res = await apiCall('/api/login', { accountNo: accNo, pin: String(state.sessionPin) });
-  if (res.ok) state.user = res.user;
-}
+    async function refreshUser() {
+      if (!state.user) return;
+      const accNo = state.user.accountNo || state.user['accountNo.'];
+      const res = await apiCall('/api/login', { accountNo: accNo, pin: String(state.sessionPin) });
+      if (res.ok) state.user = res.user;
+    }
 
-function showToast(msg, isSuccess) {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = `toast-enter flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl text-slate-200 ${isSuccess ? 'bg-amber-500 text-walnut' : 'bg-rose-600'}`;
-  toast.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle text-xl' : 'fa-exclamation-circle text-xl'}"></i> <span class="font-medium">${msg}</span>`;
-  container.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateY(20px)';
-    toast.style.transition = 'all 0.3s ease';
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
-}
+    function showToast(msg, isSuccess = true) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast-anim pointer-events-auto flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl text-sm font-semibold border ${
+        isSuccess 
+          ? 'bg-[#140C2E]/95 text-emerald-300 border-emerald-500/40 shadow-emerald-950/50' 
+          : 'bg-[#1C0B1B]/95 text-rose-300 border-rose-500/40 shadow-rose-950/50'
+      }`;
+      toast.innerHTML = `
+        <i class="fas ${isSuccess ? 'fa-circle-check text-emerald-400 text-base' : 'fa-triangle-exclamation text-rose-400 text-base'}"></i>
+        <span>${esc(msg)}</span>
+      `;
+      container.appendChild(toast);
 
-function esc(s){
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(15px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
 
-function render(){
-  const app = document.getElementById('app');
-  if (state.user) {
-    app.innerHTML = dashboardLayoutHTML(state.user);
-  } else if (state.authTab === 'landing') {
-    app.innerHTML = landingPageHTML();
-  } else {
-    app.innerHTML = authLayoutHTML();
-  }
-  wireEvents();
-}
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
 
-// --- LANDING UI ---
-function landingPageHTML() {
-  return `
-    <!-- Top Navigation -->
-    <nav class="w-full bg-[#181b21] border-b border-white/10 px-6 py-4 flex justify-between items-center fixed top-0 z-50">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-[#0f1115] rounded-lg flex items-center justify-center text-slate-200">
-          <i class="fas fa-university text-xl"></i>
-        </div>
-        <span class="text-xl font-bold tracking-tight text-slate-200">VaultX</span>
-      </div>
-      <div class="flex gap-4">
-        <button data-tab="login" class="px-5 py-2.5 text-slate-200/70 font-medium hover:text-slate-200 transition-colors">Sign In</button>
-        <button data-tab="create" class="px-6 py-2.5 bg-[#0f1115] hover:bg-[#0f1115] text-slate-200 font-medium rounded-lg shadow-md transition-all hover:shadow-lg">Get Started</button>
-      </div>
-    </nav>
+    // Master Render Trigger
+    function render() {
+      const app = document.getElementById('app');
+      if (state.user) {
+        app.innerHTML = dashboardLayoutHTML(state.user);
+      } else if (state.authTab === 'landing') {
+        app.innerHTML = landingPageHTML();
+      } else {
+        app.innerHTML = authLayoutHTML();
+      }
+      wireEvents();
+    }
 
-    <!-- Hero Section -->
-    <div class="flex-1 flex flex-col lg:flex-row mt-16">
-      <div class="w-full lg:w-1/2 p-8 lg:p-24 flex flex-col justify-center fade-in">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#181b21] text-amber-500 font-medium text-sm mb-6 w-max border border-amber-500/20">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#181b21]0"></span>
-          </span>
-          Next-Generation Console Banking
-        </div>
-        <h1 class="text-5xl lg:text-7xl font-extrabold text-slate-200 leading-tight mb-6 tracking-tight">
-          Your Complete <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Banking Solution.</span>
-        </h1>
-        <p class="text-xl text-slate-200/70 mb-10 leading-relaxed max-w-xl">
-          VaultX Bank Manager organizes banking logic cleanly to provide a secure, validated, and incredibly robust financial experience. Secure logic, clean code, reliable banking.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4">
-          <button data-tab="create" class="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-200 text-lg font-medium rounded-xl shadow-xl shadow-brass/20 transition-all hover:-translate-y-1">
-            Open an Account Today <i class="fas fa-arrow-right ml-2"></i>
-          </button>
-        </div>
-        
-        <div class="mt-16 grid grid-cols-3 gap-6 pt-8 border-t border-white/10 max-w-xl">
-          <div>
-            <div class="text-3xl text-slate-200 mb-2"><i class="fas fa-shield-alt text-amber-500"></i></div>
-            <div class="font-bold text-slate-100">Bank-Grade</div>
-            <div class="text-sm text-slate-100/70">4-Digit PIN Security</div>
-          </div>
-          <div>
-            <div class="text-3xl text-slate-200 mb-2"><i class="fas fa-bolt text-amber-500"></i></div>
-            <div class="font-bold text-slate-100">Lightning Fast</div>
-            <div class="text-sm text-slate-100/70">Instant transactions</div>
-          </div>
-          <div>
-            <div class="text-3xl text-slate-200 mb-2"><i class="fas fa-code text-indigo-500"></i></div>
-            <div class="font-bold text-slate-100">OOP Driven</div>
-            <div class="text-sm text-slate-100/70">Structured logic</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="w-full lg:w-1/2 bg-[#181b21] relative min-h-[500px] flex items-center justify-center p-8 lg:p-12 overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200"></div>
-        <!-- Decorative elements -->
-        <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div class="absolute top-1/3 left-1/4 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        
-        <!-- App mockup -->
-        <div class="relative z-10 w-full max-w-md bg-[#181b21] rounded-2xl shadow-2xl overflow-hidden border border-white/5 fade-in" style="animation-delay: 0.2s;">
-          <div class="bg-[#0f1115] px-6 py-4 border-b border-slate-700 flex justify-between items-center">
-            <div class="text-slate-200 font-semibold flex items-center gap-2"><i class="fas fa-landmark text-blue-400"></i> VaultX Dashboard</div>
-            <div class="flex gap-1.5">
-              <div class="w-3 h-3 rounded-full bg-rose-500/100"></div>
-              <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-              <div class="w-3 h-3 rounded-full bg-[#181b21]0"></div>
-            </div>
-          </div>
-          <div class="p-8">
-            <div class="w-16 h-16 bg-amber-500/20 text-amber-500 rounded-full flex items-center justify-center text-2xl mb-6 font-bold shadow-inner">
-              <i class="fas fa-user"></i>
-            </div>
-            <div class="h-6 w-1/2 bg-ledgerline rounded mb-4"></div>
-            <div class="h-12 w-full bg-[#181b21] rounded-xl mb-6 border border-white/10 flex items-center px-4 justify-between">
-              <div class="text-slate-100/70 font-mono text-sm">BALANCE</div>
-              <div class="text-slate-100 font-bold text-xl">₹ 14,500</div>
-            </div>
-            <div class="flex gap-3">
-              <div class="h-10 w-1/2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg flex justify-center items-center text-walnut/80 text-sm font-medium shadow-md shadow-blue-500/20"><i class="fas fa-arrow-down mr-2"></i> Deposit</div>
-              <div class="h-10 w-1/2 bg-[#181b21] border border-slate-300 rounded-lg flex justify-center items-center text-slate-200/70 text-sm font-medium"><i class="fas fa-arrow-up mr-2"></i> Withdraw</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// --- AUTHENTICATION UI ---
-function authLayoutHTML() {
-  return `
-    <div class="min-h-screen w-full bg-[#181b21] flex items-center justify-center p-4">
-      <button data-tab="landing" class="absolute top-8 left-8 text-slate-100/70 hover:text-slate-100 flex items-center gap-2 px-4 py-2 bg-[#181b21] rounded-lg shadow-sm border border-mahogany transition-all hover:shadow-md font-medium">
-        <i class="fas fa-arrow-left"></i> Home
-      </button>
-      
-      <div class="w-full max-w-md bg-[#181b21] rounded-2xl shadow-xl overflow-hidden fade-in border border-white/5">
-        <div class="p-8 pb-6 text-center border-b border-white/5">
-          <div class="w-16 h-16 bg-[#0f1115] rounded-2xl flex items-center justify-center text-slate-200 text-2xl mx-auto mb-4 shadow-lg">
-            <i class="fas fa-university"></i>
-          </div>
-          <h2 class="text-2xl font-bold text-slate-200">Welcome to VaultX</h2>
-          <p class="text-slate-100/70 mt-1 text-sm">Your complete console banking solution.</p>
-        </div>
-        
-        <div class="flex">
-          <button data-tab="login" class="w-1/2 py-4 font-medium text-sm transition-colors text-center ${state.authTab==='login'?'text-amber-500 border-b-2 border-brass bg-[#181b21]/50':'text-slate-200/70 hover:bg-[#181b21]/10 border-b border-white/10'}">Sign In</button>
-          <button data-tab="create" class="w-1/2 py-4 font-medium text-sm transition-colors text-center ${state.authTab==='create'?'text-amber-500 border-b-2 border-brass bg-[#181b21]/50':'text-slate-200/70 hover:bg-[#181b21]/10 border-b border-white/10'}">Create Account</button>
-        </div>
-
-        <div class="p-8 bg-[#181b21] bg-[#181b21]">
-          ${state.authTab === 'login' ? loginFormHTML() : createFormHTML()}
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function loginFormHTML(){
-  return `
-    <form id="loginForm" class="space-y-5 fade-in">
-      <div>
-        <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Email or Account Number</label>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-100/70">
-            <i class="fas fa-user-circle"></i>
-          </div>
-          <input type="text" id="li_acc" placeholder="john@example.com" autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-brass outline-none transition-all">
-        </div>
-      </div>
-      <div>
-        <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">4-Digit Secure PIN</label>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-100/70">
-            <i class="fas fa-lock"></i>
-          </div>
-          <input type="password" id="li_pin" maxlength="4" placeholder="••••" autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-brass outline-none transition-all text-xl tracking-widest font-mono">
-        </div>
-      </div>
-      <button type="submit" class="w-full bg-[#0f1115] hover:bg-[#0f1115] text-slate-200 font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-slate-900/20 mt-2">
-        Access Secure Dashboard
-      </button>
-      <div class="pt-4 mt-4 border-t border-white/5 text-center">
-        <p class="text-xs text-slate-100/70">Don't have an account? <a href="#" data-tab="create" class="text-amber-500 font-medium hover:underline">Register now</a></p>
-      </div>
-    </form>
-  `;
-}
-
-function createFormHTML(){
-  return `
-    <form id="createForm" class="space-y-4 fade-in">
-      <div>
-        <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Full Name</label>
-        <input type="text" id="cr_name" placeholder="John Doe" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
-      </div>
-      <div class="flex gap-4">
-        <div class="w-1/3">
-          <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Age</label>
-          <input type="number" id="cr_age" min="18" max="120" placeholder="18" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
-        </div>
-        <div class="w-2/3">
-          <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Email</label>
-          <input type="email" id="cr_email" placeholder="john@example.com" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
-        </div>
-      </div>
-      <div class="flex gap-4">
-        <div class="w-1/2">
-          <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Phone Number</label>
-          <input type="tel" id="cr_phone" placeholder="+1 (555) 000-0000" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
-        </div>
-        <div class="w-1/2">
-          <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Account Type</label>
-          <select id="cr_acctype" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
-            <option value="Savings">Savings</option>
-            <option value="Current">Current</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Full Address</label>
-        <input type="text" id="cr_address" placeholder="123 Main St, City, Country" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
-      </div>
-      <div>
-        <label class="block text-sm font-semibold text-slate-200/70 mb-1.5">Choose a 4-Digit PIN</label>
-        <input type="password" id="cr_pin" maxlength="4" placeholder="••••" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 outline-none transition-all text-xl tracking-widest font-mono">
-      </div>
-      <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-200 font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-brass/20 mt-2">
-        Create Account & Log In
-      </button>
-    </form>
-  `;
-}
-
-// --- DASHBOARD UI ---
-function dashboardLayoutHTML(user) {
-  const accNo = esc(user.accountNo || user['accountNo.']);
-  const initial = esc(user.name.charAt(0).toUpperCase());
-  
-  return `
-    <div class="flex h-screen overflow-hidden bg-[#181b21] w-full fade-in">
-      <!-- Sidebar Navigation -->
-      <aside class="w-72 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 flex flex-col hidden md:flex h-full shadow-2xl z-20 shrink-0">
-        <div class="h-20 flex items-center px-8 border-b border-slate-700/60 shrink-0">
+    // =================================================================
+    // 1. LANDING PAGE VIEW (Inspired by the Python Learning Poster)
+    // =================================================================
+    function landingPageHTML() {
+      return `
+        <!-- Top Navbar -->
+        <nav class="w-full bg-[#0C0721]/90 backdrop-blur-md border-b border-purple-500/15 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-[#181b21]0 rounded flex items-center justify-center shadow-lg shadow-blue-500/30 text-sm">
-              <i class="fas fa-university"></i>
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-purple-600/30">
+              <i class="fas fa-landmark text-lg"></i>
             </div>
-            <span class="text-xl font-bold tracking-wide">VaultX</span>
-          </div>
-        </div>
-        
-        <div class="p-8 flex-1 overflow-y-auto">
-          <div class="text-xs font-semibold text-slate-200/70 tracking-wider uppercase mb-4">Main Menu</div>
-          <nav class="space-y-2">
-            <button data-dtab="dashboard" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='dashboard'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
-              <i class="fas fa-home w-5 text-center"></i> 🏠 Overview
-            </button>
-            <button data-dtab="deposit" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='deposit'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
-              <i class="fas fa-arrow-down w-5 text-center"></i> 💸 Make Deposit
-            </button>
-            <button data-dtab="withdraw" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='withdraw'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
-              <i class="fas fa-arrow-up w-5 text-center"></i> 🏧 Withdraw Funds
-            </button>
-            <button data-dtab="transfer" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='transfer'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
-              <i class="fas fa-exchange-alt w-5 text-center"></i> Transfer
-            </button>
-            <button data-dtab="history" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='history'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
-              <i class="fas fa-history w-5 text-center"></i> 📜 History
-            </button>
-            <button data-dtab="cards" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='cards'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
-              <i class="fas fa-credit-card w-5 text-center"></i> 💳 Virtual Cards
-            </button>
-            <button data-dtab="loans" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='loans'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
-              <i class="fas fa-hand-holding-usd w-5 text-center"></i> 🏦 Loans
-            </button>
-            <button data-dtab="settings" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all font-medium ${state.dashTab==='settings'?'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 shadow-lg shadow-brass/20':'text-slate-200/70 hover:text-slate-200 hover:bg-[#0f1115]'}">
-              <i class="fas fa-cog w-5 text-center"></i> ⚙️ Update Profile
-            </button>
-          </nav>
-        </div>
-        
-        <div class="p-6 border-t border-white/10 shrink-0 bg-black/20">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-full bg-[#0f1115] flex items-center justify-center font-bold border border-slate-700">
-              ${initial}
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="text-sm font-semibold truncate">${esc(user.name)}</div>
-              <div class="text-xs text-slate-200/70 font-mono truncate">A/C: ${accNo}</div>
-            </div>
-          </div>
-          <button id="logoutLink" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-rose-400 border border-slate-700 hover:bg-rose-500/100/10 hover:border-rose-500/30 transition-all font-medium text-sm">
-            <i class="fas fa-sign-out-alt"></i> 🚪 Sign Out
-          </button>
-        </div>
-      </aside>
-      
-      <!-- Mobile Topbar -->
-      <div class="md:hidden w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 h-16 flex items-center justify-between px-4 shrink-0 shadow-md">
-         <div class="flex items-center gap-2 font-bold"><i class="fas fa-university text-amber-500"></i> VaultX</div>
-         <button id="mobileLogout" class="text-xs bg-rose-500/100/20 text-rose-300 px-3 py-1.5 rounded"><i class="fas fa-sign-out-alt"></i></button>
-      </div>
-
-      <!-- Main Workspace -->
-      <main class="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
-        <!-- Dashboard Header -->
-        <header class="h-20 bg-[#181b21]/5 backdrop-blur-xl border-b border-white/10 px-8 flex items-center justify-between shrink-0 z-10 hidden md:flex">
-          <div>
-            <h1 class="text-2xl font-bold text-slate-200 capitalize tracking-wide">👋 Good day, ${esc(user.name.split(' ')[0])}</h1>
-            <p class="text-sm text-slate-100/70">Here's your financial overview.</p>
-          </div>
-          <div class="flex items-center gap-4">
-             <div class="px-4 py-2 bg-[#181b21] rounded-full text-sm font-medium text-slate-200/70 border border-white/10 shadow-inner">
-               Status: <span class="text-amber-500"><i class="fas fa-shield-check"></i> Secured</span>
-             </div>
-          </div>
-        </header>
-        
-        <!-- Mobile Navigation Tabs -->
-        <div class="md:hidden flex overflow-x-auto bg-[#181b21] border-b border-white/10 shrink-0 px-2 py-2 gap-2">
-           <button data-dtab="dashboard" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='dashboard'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">🏠 Overview</button>
-           <button data-dtab="deposit" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='deposit'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">Deposit</button>
-           <button data-dtab="withdraw" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='withdraw'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">Withdraw</button>
-           <button data-dtab="transfer" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='transfer'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">Transfer</button>
-           <button data-dtab="history" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='history'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">📜 History</button>
-           <button data-dtab="settings" class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${state.dashTab==='settings'?'bg-[#181b21] text-amber-500 border border-amber-500/20':'text-slate-200/70'}">Settings</button>
-        </div>
-
-        <!-- Scrollable Content -->
-        <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-[#181b21]/50">
-          <div class="max-w-5xl mx-auto">
-            ${renderDashPanel(user)}
-          </div>
-        </div>
-      </main>
-    </div>
-  `;
-}
-
-function renderDashPanel(user) {
-  const balance = user.balance || 0;
-  const accNo = user.accountNo || user['accountNo.'];
-  
-  if (state.dashTab === 'dashboard') {
-    return `
-      <div class="fade-in">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          <!-- Balance & Card Section -->
-          <div class="lg:col-span-2 space-y-8">
-            <!-- Premium Virtual Card -->
-            <div class="glass-card rounded-3xl p-8 text-slate-200 shadow-2xl shadow-slate-800/20 relative overflow-hidden">
-              <!-- Geometric overlay -->
-              <div class="absolute -right-20 -top-20 w-64 h-64 border-[30px] border-white/5 rounded-full pointer-events-none"></div>
-              <div class="absolute right-20 -bottom-20 w-48 h-48 border-[20px] border-white/5 rounded-full pointer-events-none"></div>
-              
-              <div class="flex justify-between items-start mb-10 relative z-10">
-                <div>
-                  <div class="text-slate-100/70 text-sm font-medium uppercase tracking-widest mb-1">Available Ledger Balance</div>
-                  <div class="text-5xl font-bold font-mono tracking-tight flex items-baseline gap-2">
-                    <span class="text-3xl text-slate-100/70 font-sans font-normal">₹</span>${balance.toLocaleString('en-IN', {minimumFractionDigits: 2})}
-                  </div>
-                </div>
-                <div class="bg-[#181b21]/10 p-3 rounded-2xl backdrop-blur-sm border border-white/20">
-                  <i class="fas fa-university text-3xl text-slate-200"></i>
-                </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl font-extrabold tracking-tight text-white">Vault<span class="text-purple-400">X</span></span>
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">Python OOP</span>
               </div>
-              
-              <div class="flex justify-between items-end relative z-10">
-                <div class="space-y-1">
-                  <div class="text-slate-100/70 text-xs font-semibold uppercase tracking-wider">Account Holder</div>
-                  <div class="text-xl font-medium tracking-wide">${esc(user.name)}</div>
-                </div>
-                <div class="space-y-1 text-right">
-                  <div class="text-slate-100/70 text-xs font-semibold uppercase tracking-wider">Account Number</div>
-                  <div class="text-xl font-mono tracking-widest bg-[#181b21]/10 px-3 py-1 rounded border border-white/10">${esc(accNo)}</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Quick Action Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <button data-dtab="deposit" class="bg-[#181b21]/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl border border-white/10 shadow-sm hover:shadow-md transition-all text-left group">
-                <div class="w-12 h-12 bg-[#181b21] text-emerald-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform mb-3">
-                  <i class="fas fa-arrow-down"></i>
-                </div>
-                <h3 class="font-bold text-slate-100">Deposit</h3>
-                <p class="text-xs text-slate-100/70 mt-1">Add funds</p>
-              </button>
-              <button data-dtab="withdraw" class="bg-[#181b21]/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl border border-white/10 shadow-sm hover:shadow-md transition-all text-left group">
-                <div class="w-12 h-12 bg-rose-500/100/20 text-rose-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform mb-3">
-                  <i class="fas fa-arrow-up"></i>
-                </div>
-                <h3 class="font-bold text-slate-100">Withdraw</h3>
-                <p class="text-xs text-slate-100/70 mt-1">Remove funds</p>
-              </button>
-              <button data-dtab="transfer" class="bg-[#181b21]/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl border border-white/10 shadow-sm hover:shadow-md transition-all text-left group">
-                <div class="w-12 h-12 bg-[#181b21] text-cyan-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform mb-3">
-                  <i class="fas fa-exchange-alt"></i>
-                </div>
-                <h3 class="font-bold text-slate-100">Transfer</h3>
-                <p class="text-xs text-slate-100/70 mt-1">Send to account</p>
-              </button>
+              <p class="text-[11px] text-slate-400 font-medium">Bank Management Project</p>
             </div>
           </div>
+          <div class="flex items-center gap-3 sm:gap-4">
+            <button data-tab="login" class="px-4 py-2 text-sm text-slate-300 font-semibold hover:text-white transition-colors">Sign In</button>
+            <button data-tab="create" class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-purple-600/30 transition-all hover:scale-[1.02] active:scale-95">
+              Open Account <i class="fas fa-arrow-right ml-1 text-xs"></i>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Hero & Showcase Section -->
+        <div class="flex-1 flex flex-col relative overflow-hidden">
+          <!-- Background Ambient Glows -->
+          <div class="glow-purple absolute -top-40 -left-40 w-[600px] h-[600px] pointer-events-none"></div>
+          <div class="glow-cyan absolute top-1/3 -right-40 w-[500px] h-[500px] pointer-events-none"></div>
+
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14 w-full">
             
-            <div class="bg-gradient-to-br from-walnut to-mahogany rounded-2xl shadow-md p-6 text-slate-200 text-center">
-              <i class="fas fa-shield-alt text-4xl text-blue-400 mb-4 block"></i>
-              <h3 class="font-bold text-lg mb-2">VaultX Security</h3>
-              <p class="text-sm text-slate-100/70 leading-relaxed mb-4">Your account is protected by industry standard OOP data structures and rigorous logic checks.</p>
+            <!-- Learning Badge Banner -->
+            <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-purple-900/40 border border-purple-500/30 text-purple-300 text-xs sm:text-sm font-semibold mb-6 shadow-inner">
+              <span class="flex h-2 w-2 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+              </span>
+              <span>🚀 Started My First Python Management Project</span>
+              <span class="text-purple-400/50">|</span>
+              <span class="text-amber-400 font-bold">100 Days of Code</span>
             </div>
-          </div>
-          
-        </div>
-      </div>
-    `;
-  }
-  
-  if (state.dashTab === 'deposit') {
-    return `
-      <div class="fade-in max-w-2xl mx-auto">
-        <div class="bg-[#181b21]/5 backdrop-blur-xl rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden">
-          <div class="bg-[#181b21] p-8 border-b border-emerald-500/20 flex items-center justify-between">
-            <div>
-              <h2 class="text-2xl font-bold text-emerald-800 mb-1">Deposit Funds</h2>
-              <p class="text-emerald-400 text-sm">Securely add money to your ledger.</p>
-            </div>
-            <div class="w-16 h-16 bg-[#181b21] rounded-full flex items-center justify-center shadow-sm text-3xl text-amber-500">
-              <i class="fas fa-arrow-down"></i>
-            </div>
-          </div>
-          <div class="p-8">
-            <form id="depositForm" class="space-y-6">
-              <div>
-                <label class="block text-sm font-bold text-slate-200/70 mb-2 uppercase tracking-wide">Amount to Deposit</label>
-                <div class="relative flex items-center">
-                  <span class="absolute left-6 text-2xl text-slate-100/70 font-light">₹</span>
-                  <input type="number" id="dep_amt" min="1" max="100000" placeholder="5000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-0 focus:border-emerald-500 outline-none text-3xl font-bold text-slate-100 transition-all font-mono">
-                </div>
-                <p class="text-xs text-slate-100/70 mt-3 flex items-center gap-1"><i class="fas fa-info-circle"></i> Maximum single deposit limit applies.</p>
-              </div>
-              <button type="submit" class="w-full bg-amber-500 text-walnut hover:brightness-110 font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-emerald-600/30 flex justify-center items-center gap-3 mt-4">
-                Confirm Deposit <i class="fas fa-check"></i>
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  
-  if (state.dashTab === 'withdraw') {
-    return `
-      <div class="fade-in max-w-2xl mx-auto">
-        <div class="bg-[#181b21]/5 backdrop-blur-xl rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden">
-          <div class="bg-rose-500/10 p-8 border-b border-rose-500/20 flex items-center justify-between">
-            <div>
-              <h2 class="text-2xl font-bold text-rose-800 mb-1">🏧 Withdraw Funds</h2>
-              <p class="text-rose-600 text-sm">Available Balance: <span class="font-bold text-rose-700 font-mono text-base">₹${balance.toLocaleString('en-IN')}</span></p>
-            </div>
-            <div class="w-16 h-16 bg-[#181b21] rounded-full flex items-center justify-center shadow-sm text-3xl text-rose-500">
-              <i class="fas fa-arrow-up"></i>
-            </div>
-          </div>
-          <div class="p-8">
-            <form id="withdrawForm" class="space-y-6">
-              <div>
-                <label class="block text-sm font-bold text-slate-200/70 mb-2 uppercase tracking-wide">Amount to Withdraw</label>
-                <div class="relative flex items-center">
-                  <span class="absolute left-6 text-2xl text-slate-100/70 font-light">₹</span>
-                  <input type="number" id="wd_amt" min="1" max="${balance}" placeholder="2000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-0 focus:border-rose-500 outline-none text-3xl font-bold text-slate-100 transition-all font-mono">
+
+            <!-- Headline -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+              <div class="lg:col-span-7 space-y-6">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
+                  Building a Real-World <br>
+                  <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
+                    Bank Management System
+                  </span><br>
+                  with Python & OOP.
+                </h1>
+                
+                <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl font-normal">
+                  "Today, I began building a real-world application using OOP concepts. Learning isn't just about writing code—it's about creating something useful, one step at a time! 💜"
+                </p>
+
+                <!-- Action CTA -->
+                <div class="flex flex-wrap items-center gap-4 pt-2">
+                  <button data-tab="create" class="px-7 py-3.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-xl shadow-purple-600/30 transition-all hover:scale-[1.02] active:scale-95 flex items-center gap-2 text-base">
+                    <span>Create Account Now</span>
+                    <i class="fas fa-user-plus text-sm"></i>
+                  </button>
+                  <button data-tab="login" class="px-6 py-3.5 glass-card glass-card-hover text-purple-200 font-semibold rounded-xl text-base flex items-center gap-2">
+                    <span>Sign In to Dashboard</span>
+                    <i class="fas fa-arrow-right-to-bracket text-sm"></i>
+                  </button>
                 </div>
               </div>
-              <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-slate-200 font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-rose-600/30 flex justify-center items-center gap-3 mt-4">
-                Confirm Withdrawal <i class="fas fa-shield-check"></i>
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    `;
-  }
 
+              <!-- VS Code IDE Showcase (matching the laptop screen from the poster) -->
+              <div class="lg:col-span-5">
+                <div class="ide-window overflow-hidden">
+                  <!-- Window Header -->
+                  <div class="bg-[#140C2E] px-4 py-3 flex items-center justify-between border-b border-purple-500/20">
+                    <div class="flex items-center gap-2">
+                      <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
+                      <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+                      <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+                      <span class="ml-2 text-xs font-mono text-purple-300/80 font-medium flex items-center gap-1.5">
+                        <i class="fab fa-python text-amber-400"></i> bank_system.py
+                      </span>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-400">OOP Architecture</span>
+                  </div>
 
-  if (state.dashTab === 'transfer') {
-    return `
-      <div class="fade-in max-w-2xl mx-auto">
-        <div class="bg-[#181b21]/5 backdrop-blur-xl rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden">
-          <div class="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 p-8 border-b border-white/10 flex items-center justify-between">
-            <div>
-              <h2 class="text-2xl font-bold text-indigo-800 mb-1">Transfer Funds</h2>
-              <p class="text-cyan-400 text-sm">Instantly send money to another account.</p>
-            </div>
-            <div class="w-16 h-16 bg-[#181b21] rounded-full flex items-center justify-center shadow-sm text-3xl text-indigo-500">
-              <i class="fas fa-exchange-alt"></i>
-            </div>
-          </div>
-          <div class="p-8">
-            <form id="transferForm" class="space-y-6">
-              <div>
-                <label class="block text-sm font-bold text-slate-200/70 mb-2 uppercase tracking-wide">Target Account No / Email</label>
-                <input type="text" id="tr_target" placeholder="Recipient's info" required class="w-full px-5 py-4 rounded-xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-0 focus:border-brass outline-none text-lg font-medium text-slate-100 transition-all">
-              </div>
-              <div>
-                <label class="block text-sm font-bold text-slate-200/70 mb-2 uppercase tracking-wide">Amount to Transfer</label>
-                <div class="relative flex items-center">
-                  <span class="absolute left-6 text-2xl text-slate-100/70 font-light">₹</span>
-                  <input type="number" id="tr_amt" min="1" max="${balance}" placeholder="1000" required class="w-full pl-12 pr-6 py-5 rounded-2xl border-2 border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-0 focus:border-brass outline-none text-3xl font-bold text-slate-100 transition-all font-mono">
+                  <!-- Code Content -->
+                  <div class="p-4 sm:p-5 font-mono text-xs sm:text-sm text-slate-300 leading-relaxed overflow-x-auto space-y-1">
+                    <div class="text-purple-400 font-semibold">class <span class="text-cyan-300">Bank</span>:</div>
+                    <div class="pl-4 text-purple-300 font-medium">def <span class="text-amber-300">create_account</span>(self, name, age, mail, pin, phone):</div>
+                    <div class="pl-8 text-slate-400"># Age Validation Rule (18+)</div>
+                    <div class="pl-8 text-rose-300">if age &lt; 18:</div>
+                    <div class="pl-12 text-slate-300"><span class="text-purple-400">raise</span> ValidationError(<span class="text-emerald-300">"Must be 18+ to open account"</span>)</div>
+                    <div class="pl-8 text-slate-400"># 4-Digit Security PIN Validation</div>
+                    <div class="pl-8 text-rose-300">if len(pin) != 4 or not pin.isdigit():</div>
+                    <div class="pl-12 text-slate-300"><span class="text-purple-400">raise</span> ValidationError(<span class="text-emerald-300">"PIN must be strictly 4 digits"</span>)</div>
+                    <div class="pl-8 text-slate-400"># Encapsulated Account Setup</div>
+                    <div class="pl-8 text-cyan-300">account = Account(name, age, mail, pin, balance=450)</div>
+                    <div class="pl-8 text-emerald-400 font-bold">return account.save()</div>
+                  </div>
+                  
+                  <div class="bg-[#090518] px-4 py-2 border-t border-purple-500/15 flex justify-between items-center text-[11px] text-slate-400 font-mono">
+                    <span><i class="fas fa-check-circle text-emerald-400 mr-1"></i> Python 3.14.6 Verified</span>
+                    <span>UTF-8 Ready</span>
+                  </div>
                 </div>
               </div>
-              <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-400 hover:to-pink-500 text-slate-200 font-bold text-lg py-5 rounded-2xl transition-all shadow-lg shadow-brass/20 flex justify-center items-center gap-3 mt-4">
-                Confirm Transfer <i class="fas fa-paper-plane"></i>
-              </button>
-            </form>
+            </div>
+
+            <!-- TWO CORE SHOWCASE PANELS (Directly matching Poster: Implemented Today & Features to Add) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16 pt-12 border-t border-purple-500/20">
+              
+              <!-- Left Card: What I Implemented Today -->
+              <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300">
+                    <i class="fas fa-clipboard-check text-lg"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-bold text-white uppercase tracking-wider">What I Implemented</h3>
+                    <p class="text-xs text-purple-300">Foundational Banking Architecture</p>
+                  </div>
+                </div>
+
+                <div class="space-y-3.5">
+                  <div class="flex items-center gap-3 p-2.5 rounded-xl bg-purple-900/20 border border-purple-500/10">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-sm shrink-0">🏛️</span>
+                    <div>
+                      <div class="text-sm font-bold text-white">Bank Management System</div>
+                      <div class="text-xs text-slate-400">Centralized ledger, persistence and account directory</div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-2.5 rounded-xl bg-purple-900/20 border border-purple-500/10">
+                    <span class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center text-sm shrink-0">👤</span>
+                    <div>
+                      <div class="text-sm font-bold text-white">Account Creation Functionality</div>
+                      <div class="text-xs text-slate-400">Registers name, age, email, phone, and assigns unique account number</div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-2.5 rounded-xl bg-purple-900/20 border border-purple-500/10">
+                    <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-sm shrink-0">📝</span>
+                    <div>
+                      <div class="text-sm font-bold text-white">User Input Validation</div>
+                      <div class="text-xs text-slate-400">Robust error handling; prevents non-numeric input crashes</div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-2.5 rounded-xl bg-purple-900/20 border border-purple-500/10">
+                    <span class="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-300 flex items-center justify-center text-sm shrink-0">🔐</span>
+                    <div>
+                      <div class="text-sm font-bold text-white">4-Digit PIN Security</div>
+                      <div class="text-xs text-slate-400">Strict length verification & cryptographic hashing</div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-2.5 rounded-xl bg-purple-900/20 border border-purple-500/10">
+                    <span class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center text-sm shrink-0">🎂</span>
+                    <div>
+                      <div class="text-sm font-bold text-white">Age Validation for Creation</div>
+                      <div class="text-xs text-slate-400">Enforces strictly 18 or older; blocks underage setup</div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-2.5 rounded-xl bg-purple-900/20 border border-purple-500/10">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-sm shrink-0">🧱</span>
+                    <div>
+                      <div class="text-sm font-bold text-white">Organized Using Python Classes</div>
+                      <div class="text-xs text-slate-400">Encapsulated attributes and object methods (OOP)</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pt-2 text-center text-xs font-handwriting text-purple-300 text-lg">
+                  "Step by step, building something meaningful! 💜"
+                </div>
+              </div>
+
+              <!-- Right Card: Features To Add Next / Active -->
+              <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300">
+                      <i class="fas fa-gears text-lg"></i>
+                    </div>
+                    <div>
+                      <h3 class="text-lg font-bold text-white uppercase tracking-wider">Features Implemented</h3>
+                      <p class="text-xs text-indigo-300">Interactive Banking Services</p>
+                    </div>
+                  </div>
+                  <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div class="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/20 flex items-center gap-3">
+                    <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
+                    <span class="text-sm font-bold text-slate-200">Deposit Money</span>
+                  </div>
+
+                  <div class="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/20 flex items-center gap-3">
+                    <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
+                    <span class="text-sm font-bold text-slate-200">Withdrawal Money</span>
+                  </div>
+
+                  <div class="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/20 flex items-center gap-3">
+                    <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
+                    <span class="text-sm font-bold text-slate-200">Check Balance</span>
+                  </div>
+
+                  <div class="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/20 flex items-center gap-3">
+                    <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
+                    <span class="text-sm font-bold text-slate-200">Update Account Details</span>
+                  </div>
+
+                  <div class="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/20 flex items-center gap-3">
+                    <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
+                    <span class="text-sm font-bold text-slate-200">Delete Account</span>
+                  </div>
+
+                  <div class="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/20 flex items-center gap-3">
+                    <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
+                    <span class="text-sm font-bold text-slate-200">AI Banking Bot</span>
+                  </div>
+                </div>
+
+                <!-- Visual Neon Bank Illustration -->
+                <div class="p-5 rounded-2xl bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border border-purple-500/30 flex items-center justify-between">
+                  <div class="space-y-1">
+                    <div class="text-sm font-bold text-white flex items-center gap-2">
+                      <i class="fas fa-coins text-amber-400"></i> VaultX Welcome Bonus
+                    </div>
+                    <div class="text-xs text-purple-300">New accounts receive an initial setup balance!</div>
+                  </div>
+                  <button data-tab="create" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-lg shadow-md transition-transform hover:scale-105">
+                    Start Now
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Goal & Quote Banner -->
+            <div class="mt-12 p-6 rounded-2xl bg-[#110A2C] border border-purple-500/20 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white text-xl shadow-lg shadow-rose-500/20">
+                  <i class="fas fa-bullseye"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-bold uppercase tracking-wider text-purple-400">GOAL</div>
+                  <div class="text-base font-bold text-white">Keep learning. Keep building. Keep growing. 💜</div>
+                </div>
+              </div>
+              <div class="text-sm font-medium text-slate-400 italic text-center md:text-right">
+                "Let's build the future together with code!"
+              </div>
+            </div>
+
           </div>
         </div>
-      </div>
-    `;
-  }
-  
-  if (state.dashTab === 'history') {
-    const txs = user.transactions || [];
-    const rows = txs.map(t => `
-      <tr class="border-b border-white/5 hover:bg-[#181b21]/10 transition-colors">
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-100/70">${t.date}</td>
-        <td class="px-6 py-4 whitespace-nowrap">
-          <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-            ${t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? 'bg-emerald-100 text-emerald-800' : 
-              t.type === 'WITHDRAWAL' || t.type === 'TRANSFER OUT' ? 'bg-rose-100 text-rose-800' : 'bg-amber-500/20 text-blue-800'}">
-            ${t.type}
-          </span>
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-200/70">${t.detail || ''}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-right ${t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? 'text-emerald-400' : t.type==='CREATE'?'text-slate-100/70':'text-rose-600'}">
-          ${t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? '+' : t.type==='CREATE'?'':'-'}₹${t.amount.toLocaleString('en-IN')}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-slate-100 text-right">
-          ₹${t.balance.toLocaleString('en-IN')}
-        </td>
-      </tr>
-    `).join('');
-    
-    return `
-      <div class="fade-in max-w-5xl mx-auto">
-        <div class="bg-[#181b21]/5 backdrop-blur-xl rounded-3xl shadow-lg border border-white/10 overflow-hidden">
-          <div class="bg-[#181b21]/5 p-6 border-b border-white/10 flex justify-between items-center">
-            <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2"><i class="fas fa-history text-slate-100/70"></i> Transaction 📜 History</h3>
-            <span class="text-sm font-medium text-slate-100/70">${txs.length} total records</span>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead class="bg-[#181b21] border-b border-white/10">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-bold text-slate-100/70 uppercase tracking-wider">Date/Time</th>
-                  <th class="px-6 py-3 text-left text-xs font-bold text-slate-100/70 uppercase tracking-wider">Type</th>
-                  <th class="px-6 py-3 text-left text-xs font-bold text-slate-100/70 uppercase tracking-wider">Details</th>
-                  <th class="px-6 py-3 text-right text-xs font-bold text-slate-100/70 uppercase tracking-wider">Amount</th>
-                  <th class="px-6 py-3 text-right text-xs font-bold text-slate-100/70 uppercase tracking-wider">Balance</th>
-                </tr>
-              </thead>
-              <tbody class="bg-transparent">
-                ${rows.length ? rows : '<tr><td colspan="5" class="px-6 py-10 text-center text-slate-100/70">No transactions found.</td></tr>'}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    `;
-  }
+      `;
+    }
 
-
-  if (state.dashTab === 'cards') {
-    return `
-      <div class="fade-in max-w-4xl mx-auto space-y-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-2xl font-bold text-slate-100">Your 💳 Virtual Cards</h2>
-            <p class="text-slate-100/70 text-sm">Manage your debit and credit cards securely.</p>
-          </div>
-          <button onclick="requestNewCard()" class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 rounded-lg text-sm font-bold hover:bg-[#0f1115] transition-colors shadow-lg active:scale-95">
-            <i class="fas fa-plus"></i> Request New Card
+    // =================================================================
+    // 2. AUTHENTICATION (SIGN IN / CREATE ACCOUNT)
+    // =================================================================
+    function authLayoutHTML() {
+      const isLogin = state.authTab === 'login';
+      return `
+        <div class="min-h-screen w-full flex flex-col items-center justify-center p-4 relative">
+          <!-- Back Home Button -->
+          <button data-tab="landing" class="absolute top-6 left-6 text-slate-300 hover:text-white flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-950/40 border border-purple-500/20 hover:border-purple-500/40 transition-all font-semibold text-sm">
+            <i class="fas fa-arrow-left"></i> Home
           </button>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <!-- Card 1 -->
-          <div class="relative w-full h-56 bg-gradient-to-br from-walnut to-mahogany rounded-3xl p-6 text-slate-200 shadow-2xl overflow-hidden flex flex-col justify-between group">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-[#181b21] opacity-5 rounded-full -mr-20 -mt-20 group-hover:scale-110 transition-transform duration-700"></div>
-            <div class="flex justify-between items-start relative z-10">
-              <div class="text-lg font-bold tracking-widest text-slate-200/70">VaultX <span class="text-slate-200">PLATINUM</span></div>
-              <i class="fas fa-wifi text-xl opacity-80"></i>
-            </div>
-            <div class="relative z-10">
-              <div class="font-mono text-2xl tracking-[0.2em] mb-2 shadow-sm">${user.card_number ? user.card_number.match(/.{1,4}/g).join(' ') : '4532 9912 **** ' + String(accNo).substring(0,4).padEnd(4,'8')}</div>
-              <div class="flex justify-between text-xs font-medium uppercase tracking-widest text-slate-200/70">
-                <span>${esc(user.name)}</span>
-                <span class="flex items-center gap-4">
-                  <span>CVV: ***</span>
-                  <span>EXP: ${user.expiry || '12/29'}</span>
-                </span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Card Controls -->
-          <div class="bg-[#181b21]/5 backdrop-blur-xl p-6 rounded-3xl shadow-lg border border-white/10">
-            <h3 class="font-bold text-slate-100 mb-4">Card Settings</h3>
-            <div class="space-y-4">
-              <div class="flex items-center justify-between p-4 bg-[#181b21] rounded-xl border border-white/5">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-400 flex items-center justify-center"><i class="fas fa-snowflake"></i></div>
-                  <div>
-                    <div class="font-bold text-slate-100 text-sm">Freeze Card</div>
-                    <div class="text-xs text-slate-100/70">Temporarily lock all transactions</div>
-                  </div>
-                </div>
-                <div class="w-12 h-6 bg-slate-300 rounded-full relative cursor-pointer hover:bg-slate-400 transition-colors">
-                  <div class="w-5 h-5 bg-[#181b21] rounded-full absolute top-0.5 left-0.5 shadow-sm"></div>
-                </div>
-              </div>
-              <div class="flex items-center justify-between p-4 bg-[#181b21] rounded-xl border border-white/5">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center"><i class="fas fa-plane"></i></div>
-                  <div>
-                    <div class="font-bold text-slate-100 text-sm">International Usage</div>
-                    <div class="text-xs text-slate-100/70">Enable foreign transactions</div>
-                  </div>
-                </div>
-                <div class="w-12 h-6 bg-[#181b21]0 rounded-full relative cursor-pointer hover:bg-gradient-to-r from-cyan-500 to-blue-600 transition-colors">
-                  <div class="w-5 h-5 bg-[#181b21] rounded-full absolute top-0.5 right-0.5 shadow-sm"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  
-  if (state.dashTab === 'loans') {
-    return `
-      <div class="fade-in max-w-4xl mx-auto space-y-6">
-        <div>
-          <h2 class="text-2xl font-bold text-slate-100">Loan Center</h2>
-          <p class="text-slate-100/70 text-sm">Instant pre-approved loans with competitive interest rates.</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-[#181b21]/5 border border-white/10 p-6 rounded-3xl">
-            <h3 class="font-bold text-cyan-300 mb-1">Personal Loan</h3>
-            <div class="text-cyan-400 text-2xl font-bold mb-4">Up to ₹5,00,000</div>
-            <p class="text-sm text-cyan-200/80 mb-6">Rates starting at 10.5% p.a. Minimal documentation required.</p>
-            <button class="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-slate-200 py-2 rounded-xl text-sm font-bold shadow-md hover:from-purple-400 hover:to-pink-500 transition-colors">Apply Now</button>
-          </div>
-          <div class="bg-[#181b21]/5 border border-white/10 p-6 rounded-3xl">
-            <h3 class="font-bold text-emerald-300 mb-1">Home Loan</h3>
-            <div class="text-emerald-400 text-2xl font-bold mb-4">Up to ₹2 Crores</div>
-            <p class="text-sm text-emerald-200/80 mb-6">Rates starting at 8.3% p.a. Flexible repayment tenure up to 30 years.</p>
-            <button class="w-full bg-amber-500 text-walnut text-slate-200 py-2 rounded-xl text-sm font-bold shadow-md hover:brightness-110 transition-colors">Calculate EMI</button>
-          </div>
-          <div class="bg-[#181b21] border border-white/10 p-6 rounded-3xl shadow-sm flex flex-col justify-center items-center text-center">
-            <div class="w-16 h-16 bg-[#181b21]/10 text-slate-200/70 rounded-full flex items-center justify-center text-2xl mb-4"><i class="fas fa-file-invoice-dollar"></i></div>
-            <h3 class="font-bold text-slate-100">No Active 🏦 Loans</h3>
-            <p class="text-sm text-slate-100/70 mt-2">You currently do not have any active loans linked to this account.</p>
-          </div>
-        </div>
-      </div>
-    `;
-  }
 
-  if (state.dashTab === 'settings') {
-    return `
-      <div class="fade-in max-w-4xl mx-auto space-y-8">
-        <div class="bg-[#181b21] rounded-3xl shadow-md border border-white/10 overflow-hidden">
-          <div class="bg-[#181b21]/5 p-6 border-b border-white/10">
-            <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2"><i class="fas fa-user-edit text-amber-500"></i> Modify Account Information</h3>
+          <!-- Ambient Glow -->
+          <div class="glow-purple absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] pointer-events-none"></div>
+
+          <div class="w-full max-w-md glass-card rounded-3xl shadow-2xl overflow-hidden border border-purple-500/30 relative z-10 my-8">
+            <!-- Header -->
+            <div class="p-8 pb-6 text-center border-b border-purple-500/15">
+              <div class="w-14 h-14 bg-gradient-to-tr from-purple-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-lg shadow-purple-600/30">
+                <i class="fas fa-shield-halved"></i>
+              </div>
+              <h2 class="text-2xl font-extrabold text-white tracking-tight">VaultX Banking Gateway</h2>
+              <p class="text-xs text-purple-300 mt-1 font-medium">Secure Logic. Clean Code. Reliable Banking.</p>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="flex border-b border-purple-500/15 bg-[#0A051A]/60">
+              <button data-tab="login" class="w-1/2 py-3.5 text-sm font-bold transition-all text-center ${
+                isLogin ? 'text-purple-300 border-b-2 border-purple-500 bg-purple-900/20' : 'text-slate-400 hover:text-white'
+              }">Sign In</button>
+              <button data-tab="create" class="w-1/2 py-3.5 text-sm font-bold transition-all text-center ${
+                !isLogin ? 'text-purple-300 border-b-2 border-purple-500 bg-purple-900/20' : 'text-slate-400 hover:text-white'
+              }">Create Account</button>
+            </div>
+
+            <!-- Form Body -->
+            <div class="p-6 sm:p-8">
+              ${isLogin ? loginFormHTML() : createFormHTML()}
+            </div>
           </div>
-          <div class="p-8">
-            <form id="updateForm" class="space-y-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label class="block text-sm font-bold text-slate-200/70 mb-2">Full Name</label>
-                  <input type="text" id="up_name" placeholder="${esc(user.name)}" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none transition-shadow bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400">
+        </div>
+      `;
+    }
+
+    function loginFormHTML() {
+      return `
+        <form id="loginForm" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Account Number or Email</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-purple-400"><i class="fas fa-id-card"></i></span>
+              <input type="text" id="li_acc" placeholder="e.g. 1234 or email" required autocomplete="off"
+                class="w-full pl-10 pr-4 py-3 rounded-xl bg-[#0F0826] border border-purple-500/25 text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 font-medium text-sm transition-all">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">4-Digit PIN</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-purple-400"><i class="fas fa-lock"></i></span>
+              <input type="password" id="li_pin" maxlength="4" placeholder="••••" required autocomplete="off"
+                class="w-full pl-10 pr-4 py-3 rounded-xl bg-[#0F0826] border border-purple-500/25 text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 font-mono tracking-widest text-lg transition-all">
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-purple-600/30 transition-all hover:scale-[1.01] active:scale-95 text-sm flex items-center justify-center gap-2">
+            <span>Unlock Dashboard</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+
+          <div class="text-center pt-2">
+            <span class="text-xs text-slate-400">New here? </span>
+            <button type="button" data-tab="create" class="text-xs font-bold text-purple-400 hover:underline">Open a free bank account</button>
+          </div>
+        </form>
+      `;
+    }
+
+    function createFormHTML() {
+      return `
+        <form id="createForm" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Full Name</label>
+            <input type="text" id="cr_name" placeholder="John Doe" required
+              class="w-full px-4 py-2.5 rounded-xl bg-[#0F0826] border border-purple-500/25 text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 text-sm">
+          </div>
+
+          <div class="grid grid-cols-12 gap-3">
+            <div class="col-span-5">
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Age (18+)</label>
+              <input type="number" id="cr_age" min="1" max="120" placeholder="18" required
+                class="w-full px-4 py-2.5 rounded-xl bg-[#0F0826] border border-purple-500/25 text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 text-sm">
+            </div>
+            <div class="col-span-7">
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Email</label>
+              <input type="email" id="cr_email" placeholder="john@example.com" required
+                class="w-full px-4 py-2.5 rounded-xl bg-[#0F0826] border border-purple-500/25 text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 text-sm">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-12 gap-3">
+            <div class="col-span-6">
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Phone Number</label>
+              <input type="tel" id="cr_phone" placeholder="9876543210"
+                class="w-full px-4 py-2.5 rounded-xl bg-[#0F0826] border border-purple-500/25 text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 text-sm">
+            </div>
+            <div class="col-span-6">
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Account Type</label>
+              <select id="cr_acctype" class="w-full px-3 py-2.5 rounded-xl bg-[#0F0826] border border-purple-500/25 text-white text-sm focus:outline-none focus:border-purple-400">
+                <option value="Savings">Savings Account</option>
+                <option value="Current">Current Account</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Set 4-Digit Secure PIN</label>
+            <input type="password" id="cr_pin" maxlength="4" placeholder="••••" required
+              class="w-full px-4 py-2.5 rounded-xl bg-[#0F0826] border border-purple-500/25 text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 font-mono tracking-widest text-lg">
+            <p class="text-[11px] text-purple-300/80 mt-1">Must be strictly 4 numeric digits (e.g. 1234).</p>
+          </div>
+
+          <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-purple-600/30 transition-all hover:scale-[1.01] active:scale-95 text-sm flex items-center justify-center gap-2 mt-2">
+            <span>Register & Initialize Ledger</span>
+            <i class="fas fa-sparkles text-amber-300"></i>
+          </button>
+        </form>
+      `;
+    }
+
+    // =================================================================
+    // 3. DASHBOARD VIEW (Full Banking Operations Suite)
+    // =================================================================
+    function dashboardLayoutHTML(user) {
+      const accNo = esc(user.accountNo || user['accountNo.']);
+      const balance = Number(user.balance || 0);
+      const name = esc(user.name);
+
+      return `
+        <div class="flex h-screen overflow-hidden w-full bg-[#070412]">
+          <!-- Sidebar Navigation -->
+          <aside class="w-64 bg-[#0C0721] border-r border-purple-500/15 text-slate-300 flex flex-col shrink-0 hidden md:flex">
+            <!-- Sidebar Brand -->
+            <div class="h-20 flex items-center px-6 border-b border-purple-500/15 gap-3">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-purple-600/30">
+                <i class="fas fa-landmark text-sm"></i>
+              </div>
+              <div>
+                <span class="font-extrabold text-white text-lg tracking-tight">Vault<span class="text-purple-400">X</span></span>
+                <span class="text-[10px] block text-purple-400 font-mono">Bank Ledger</span>
+              </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
+              <button data-dtab="dashboard" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                state.dashTab === 'dashboard' ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'hover:bg-purple-900/20 hover:text-white'
+              }">
+                <i class="fas fa-grid-2 text-base w-5 text-center"></i> Overview
+              </button>
+
+              <button data-dtab="deposit" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                state.dashTab === 'deposit' ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'hover:bg-purple-900/20 hover:text-white'
+              }">
+                <i class="fas fa-arrow-down-to-bracket text-base w-5 text-center text-emerald-400"></i> Deposit Money
+              </button>
+
+              <button data-dtab="withdraw" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                state.dashTab === 'withdraw' ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'hover:bg-purple-900/20 hover:text-white'
+              }">
+                <i class="fas fa-arrow-up-from-bracket text-base w-5 text-center text-rose-400"></i> Withdraw Funds
+              </button>
+
+              <button data-dtab="transfer" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                state.dashTab === 'transfer' ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'hover:bg-purple-900/20 hover:text-white'
+              }">
+                <i class="fas fa-paper-plane text-base w-5 text-center text-cyan-400"></i> Transfer Money
+              </button>
+
+              <button data-dtab="history" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                state.dashTab === 'history' ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'hover:bg-purple-900/20 hover:text-white'
+              }">
+                <i class="fas fa-clock-rotate-left text-base w-5 text-center text-amber-400"></i> Transaction History
+              </button>
+
+              <button data-dtab="cards" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                state.dashTab === 'cards' ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'hover:bg-purple-900/20 hover:text-white'
+              }">
+                <i class="fas fa-credit-card text-base w-5 text-center text-purple-400"></i> Virtual Cards
+              </button>
+
+              <button data-dtab="settings" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                state.dashTab === 'settings' ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'hover:bg-purple-900/20 hover:text-white'
+              }">
+                <i class="fas fa-user-gear text-base w-5 text-center"></i> Account Settings
+              </button>
+            </nav>
+
+            <!-- User Info & Logout -->
+            <div class="p-4 border-t border-purple-500/15 bg-[#090518]">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-9 h-9 rounded-full bg-purple-700/50 flex items-center justify-center font-bold text-white border border-purple-400/30">
+                  ${name.charAt(0).toUpperCase()}
                 </div>
-                <div>
-                  <label class="block text-sm font-bold text-slate-200/70 mb-2">Email Address</label>
-                  <input type="email" id="up_email" placeholder="${esc(user.email)}" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none transition-shadow bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400">
+                <div class="overflow-hidden">
+                  <div class="text-xs font-bold text-white truncate">${name}</div>
+                  <div class="text-[10px] font-mono text-purple-400">A/C: ${accNo}</div>
                 </div>
               </div>
-              <div class="max-w-xs">
-                <label class="block text-sm font-bold text-slate-200/70 mb-2">New 4-Digit PIN</label>
-                <input type="password" id="up_pin" maxlength="4" placeholder="••••" class="w-full px-5 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none transition-shadow bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 text-xl tracking-widest font-mono">
-                <p class="text-xs text-slate-100/70 mt-2">Leave blank to keep current PIN.</p>
+              <button id="logoutLink" class="w-full py-2 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/25 text-rose-300 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-2">
+                <i class="fas fa-arrow-right-from-bracket"></i> Sign Out
+              </button>
+            </div>
+          </aside>
+
+          <!-- Main Workspace -->
+          <div class="flex-1 flex flex-col h-full overflow-hidden">
+            <!-- Mobile Topbar -->
+            <header class="md:hidden bg-[#0C0721] border-b border-purple-500/15 p-4 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-white"><i class="fas fa-landmark text-xs"></i></div>
+                <span class="font-extrabold text-white text-base">VaultX</span>
               </div>
-              <div class="pt-4">
-                <button type="submit" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-200 font-medium py-3 px-8 rounded-xl transition-all shadow-md shadow-brass/20">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono text-purple-300">Rs. ${balance.toLocaleString()}</span>
+                <button id="mobileLogout" class="p-2 text-rose-400"><i class="fas fa-arrow-right-from-bracket"></i></button>
+              </div>
+            </header>
+
+            <!-- Mobile Tab Bar -->
+            <div class="md:hidden flex overflow-x-auto bg-[#090518] border-b border-purple-500/15 px-2 py-2 gap-2 shrink-0">
+              <button data-dtab="dashboard" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${state.dashTab==='dashboard'?'bg-purple-600 text-white':'text-slate-400'}">Overview</button>
+              <button data-dtab="deposit" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${state.dashTab==='deposit'?'bg-purple-600 text-white':'text-slate-400'}">Deposit</button>
+              <button data-dtab="withdraw" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${state.dashTab==='withdraw'?'bg-purple-600 text-white':'text-slate-400'}">Withdraw</button>
+              <button data-dtab="transfer" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${state.dashTab==='transfer'?'bg-purple-600 text-white':'text-slate-400'}">Transfer</button>
+              <button data-dtab="history" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${state.dashTab==='history'?'bg-purple-600 text-white':'text-slate-400'}">History</button>
+              <button data-dtab="cards" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${state.dashTab==='cards'?'bg-purple-600 text-white':'text-slate-400'}">Cards</button>
+              <button data-dtab="settings" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${state.dashTab==='settings'?'bg-purple-600 text-white':'text-slate-400'}">Settings</button>
+            </div>
+
+            <!-- Scrollable Content Pane -->
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+              <div class="max-w-5xl mx-auto space-y-6">
+                ${renderDashboardPane(user)}
+              </div>
+            </main>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDashboardPane(user) {
+      const balance = Number(user.balance || 0);
+      const accNo = esc(user.accountNo || user['accountNo.']);
+      const name = esc(user.name);
+
+      // TAB 1: OVERVIEW
+      if (state.dashTab === 'dashboard') {
+        return `
+          <!-- Hero Card Section -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Neon Bank Card -->
+            <div class="lg:col-span-7 bank-card-gradient rounded-3xl p-6 sm:p-8 relative overflow-hidden flex flex-col justify-between min-h-[220px]">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-xs font-bold text-purple-300 uppercase tracking-widest">Available Balance</div>
+                  <div class="text-3xl sm:text-4xl font-extrabold text-white mt-1 font-mono flex items-baseline gap-1">
+                    <span class="text-2xl text-purple-400 font-sans">₹</span>${balance.toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                  </div>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300">
+                  <i class="fas fa-shield-check text-xl"></i>
+                </div>
+              </div>
+
+              <div class="pt-8 flex justify-between items-end border-t border-purple-500/20 mt-4">
+                <div>
+                  <div class="text-[10px] uppercase font-bold text-purple-300/80 tracking-wider">Account Holder</div>
+                  <div class="text-base font-bold text-white tracking-wide">${name}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-[10px] uppercase font-bold text-purple-300/80 tracking-wider">Account Number</div>
+                  <div class="text-sm font-mono text-purple-200 tracking-wider bg-purple-950/60 px-2.5 py-1 rounded border border-purple-500/30">${accNo}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Action Shortcuts -->
+            <div class="lg:col-span-5 grid grid-cols-2 gap-4">
+              <button data-dtab="deposit" class="glass-card glass-card-hover rounded-2xl p-5 text-left flex flex-col justify-between">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-lg mb-3">
+                  <i class="fas fa-arrow-down-to-bracket"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white text-sm">Deposit</h4>
+                  <p class="text-xs text-slate-400 mt-0.5">Add funds instantly</p>
+                </div>
+              </button>
+
+              <button data-dtab="withdraw" class="glass-card glass-card-hover rounded-2xl p-5 text-left flex flex-col justify-between">
+                <div class="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 text-lg mb-3">
+                  <i class="fas fa-arrow-up-from-bracket"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white text-sm">Withdraw</h4>
+                  <p class="text-xs text-slate-400 mt-0.5">Secure payout</p>
+                </div>
+              </button>
+
+              <button data-dtab="transfer" class="glass-card glass-card-hover rounded-2xl p-5 text-left flex flex-col justify-between">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-lg mb-3">
+                  <i class="fas fa-paper-plane"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white text-sm">Transfer</h4>
+                  <p class="text-xs text-slate-400 mt-0.5">Send to account</p>
+                </div>
+              </button>
+
+              <button data-dtab="history" class="glass-card glass-card-hover rounded-2xl p-5 text-left flex flex-col justify-between">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-lg mb-3">
+                  <i class="fas fa-receipt"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white text-sm">Ledger</h4>
+                  <p class="text-xs text-slate-400 mt-0.5">View records</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feature Implementation Status Card -->
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fas fa-circle-check text-purple-400"></i> Active Python OOP Engine
+              </h3>
+              <span class="text-xs font-mono text-purple-300 bg-purple-900/30 px-2.5 py-1 rounded-full border border-purple-500/20">Class: BankManager</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-[#0F0826] border border-purple-500/15">
+                <span class="text-slate-400 block mb-0.5">PIN Validation</span>
+                <span class="text-emerald-400 font-bold">Strict 4-Digit Verified</span>
+              </div>
+              <div class="p-3 rounded-xl bg-[#0F0826] border border-purple-500/15">
+                <span class="text-slate-400 block mb-0.5">Age Rule</span>
+                <span class="text-emerald-400 font-bold">18+ Enforced</span>
+              </div>
+              <div class="p-3 rounded-xl bg-[#0F0826] border border-purple-500/15">
+                <span class="text-slate-400 block mb-0.5">Overdraft Shield</span>
+                <span class="text-emerald-400 font-bold">Active & Protected</span>
+              </div>
+              <div class="p-3 rounded-xl bg-[#0F0826] border border-purple-500/15">
+                <span class="text-slate-400 block mb-0.5">Persistence</span>
+                <span class="text-emerald-400 font-bold">JSON Data Ledger</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // TAB 2: DEPOSIT
+      if (state.dashTab === 'deposit') {
+        return `
+          <div class="max-w-xl mx-auto glass-card rounded-3xl p-6 sm:p-8 border border-purple-500/30 space-y-6">
+            <div class="flex items-center gap-3 border-b border-purple-500/20 pb-4">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl">
+                <i class="fas fa-arrow-down-to-bracket"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-extrabold text-white">Deposit Funds</h3>
+                <p class="text-xs text-purple-300">Available: Rs. ${balance.toLocaleString()}</p>
+              </div>
+            </div>
+
+            <form id="depositForm" class="space-y-5">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Deposit Amount (₹)</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-xl font-bold text-purple-400">₹</span>
+                  <input type="number" id="dep_amt" min="1" max="500000" placeholder="1000" required
+                    class="w-full pl-10 pr-4 py-4 rounded-xl bg-[#0F0826] border border-purple-500/30 text-2xl font-bold font-mono text-white focus:outline-none focus:border-emerald-400">
+                </div>
+              </div>
+
+              <!-- Quick Presets -->
+              <div class="flex gap-2">
+                <button type="button" onclick="document.getElementById('dep_amt').value=500" class="flex-1 py-1.5 rounded-lg bg-purple-900/30 hover:bg-purple-900/50 text-xs font-semibold border border-purple-500/20 text-purple-200">+₹500</button>
+                <button type="button" onclick="document.getElementById('dep_amt').value=1000" class="flex-1 py-1.5 rounded-lg bg-purple-900/30 hover:bg-purple-900/50 text-xs font-semibold border border-purple-500/20 text-purple-200">+₹1,000</button>
+                <button type="button" onclick="document.getElementById('dep_amt').value=5000" class="flex-1 py-1.5 rounded-lg bg-purple-900/30 hover:bg-purple-900/50 text-xs font-semibold border border-purple-500/20 text-purple-200">+₹5,000</button>
+              </div>
+
+              <button type="submit" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 text-base transition-all hover:scale-[1.01]">
+                Confirm Deposit
+              </button>
+            </form>
+          </div>
+        `;
+      }
+
+      // TAB 3: WITHDRAW
+      if (state.dashTab === 'withdraw') {
+        return `
+          <div class="max-w-xl mx-auto glass-card rounded-3xl p-6 sm:p-8 border border-purple-500/30 space-y-6">
+            <div class="flex items-center gap-3 border-b border-purple-500/20 pb-4">
+              <div class="w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 text-xl">
+                <i class="fas fa-arrow-up-from-bracket"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-extrabold text-white">Withdraw Funds</h3>
+                <p class="text-xs text-rose-300">Available: Rs. ${balance.toLocaleString()} (Overdraft Protected)</p>
+              </div>
+            </div>
+
+            <form id="withdrawForm" class="space-y-5">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Withdrawal Amount (₹)</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-xl font-bold text-rose-400">₹</span>
+                  <input type="number" id="wd_amt" min="1" max="${balance}" placeholder="500" required
+                    class="w-full pl-10 pr-4 py-4 rounded-xl bg-[#0F0826] border border-purple-500/30 text-2xl font-bold font-mono text-white focus:outline-none focus:border-rose-400">
+                </div>
+              </div>
+
+              <button type="submit" class="w-full py-4 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-bold rounded-xl shadow-lg shadow-rose-600/30 text-base transition-all hover:scale-[1.01]">
+                Process Withdrawal
+              </button>
+            </form>
+          </div>
+        `;
+      }
+
+      // TAB 4: TRANSFER
+      if (state.dashTab === 'transfer') {
+        return `
+          <div class="max-w-xl mx-auto glass-card rounded-3xl p-6 sm:p-8 border border-purple-500/30 space-y-6">
+            <div class="flex items-center gap-3 border-b border-purple-500/20 pb-4">
+              <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl">
+                <i class="fas fa-paper-plane"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-extrabold text-white">Transfer Funds</h3>
+                <p class="text-xs text-cyan-300">Instant peer-to-peer ledger settlement</p>
+              </div>
+            </div>
+
+            <form id="transferForm" class="space-y-5">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Recipient Account Number or Email</label>
+                <input type="text" id="tr_target" placeholder="Recipient's A/C number or email" required
+                  class="w-full px-4 py-3 rounded-xl bg-[#0F0826] border border-purple-500/30 text-white focus:outline-none focus:border-cyan-400 text-sm">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Transfer Amount (₹)</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-xl font-bold text-cyan-400">₹</span>
+                  <input type="number" id="tr_amt" min="1" max="${balance}" placeholder="1000" required
+                    class="w-full pl-10 pr-4 py-4 rounded-xl bg-[#0F0826] border border-purple-500/30 text-2xl font-bold font-mono text-white focus:outline-none focus:border-cyan-400">
+                </div>
+              </div>
+
+              <button type="submit" class="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg shadow-cyan-600/30 text-base transition-all hover:scale-[1.01]">
+                Execute Transfer
+              </button>
+            </form>
+          </div>
+        `;
+      }
+
+      // TAB 5: TRANSACTION HISTORY / LEDGER
+      if (state.dashTab === 'history') {
+        const txs = user.transactions || [];
+        const rows = txs.map(t => `
+          <tr class="border-b border-purple-500/10 hover:bg-purple-900/10 transition-colors">
+            <td class="px-5 py-3.5 text-xs text-slate-400 font-mono">${esc(t.date)}</td>
+            <td class="px-5 py-3.5">
+              <span class="px-2.5 py-1 text-[10px] font-bold rounded-full ${
+                t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+                t.type === 'WITHDRAWAL' || t.type === 'TRANSFER OUT' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
+                'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+              }">${esc(t.type)}</span>
+            </td>
+            <td class="px-5 py-3.5 text-xs text-slate-300">${esc(t.detail || '-')}</td>
+            <td class="px-5 py-3.5 text-xs font-mono font-bold text-right ${
+              t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? 'text-emerald-400' :
+              t.type === 'CREATE' ? 'text-slate-400' : 'text-rose-400'
+            }">
+              ${t.type === 'DEPOSIT' || t.type === 'TRANSFER IN' ? '+' : t.type === 'CREATE' ? '' : '-'}₹${Number(t.amount).toLocaleString('en-IN')}
+            </td>
+            <td class="px-5 py-3.5 text-xs font-mono font-bold text-white text-right">
+              ₹${Number(t.balance).toLocaleString('en-IN')}
+            </td>
+          </tr>
+        `).join('');
+
+        return `
+          <div class="glass-card rounded-2xl overflow-hidden border border-purple-500/25">
+            <div class="p-5 border-b border-purple-500/15 flex justify-between items-center bg-[#0C0721]">
+              <div>
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                  <i class="fas fa-clock-rotate-left text-purple-400"></i> Transaction Ledger
+                </h3>
+                <p class="text-xs text-slate-400">Verified record of all debits and credits</p>
+              </div>
+              <span class="text-xs font-mono text-purple-300 bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20">${txs.length} entries</span>
+            </div>
+            
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead class="bg-[#090518] border-b border-purple-500/15 text-[11px] font-bold text-purple-300 uppercase tracking-wider font-mono">
+                  <tr>
+                    <th class="px-5 py-3">Timestamp</th>
+                    <th class="px-5 py-3">Type</th>
+                    <th class="px-5 py-3">Description</th>
+                    <th class="px-5 py-3 text-right">Amount</th>
+                    <th class="px-5 py-3 text-right">Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rows.length ? rows : '<tr><td colspan="5" class="p-8 text-center text-xs text-slate-400">No transaction records logged yet.</td></tr>'}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      // TAB 6: VIRTUAL CARDS
+      if (state.dashTab === 'cards') {
+        const cardNum = user.card_number ? user.card_number.match(/.{1,4}/g).join(' ') : '4532 9912 8841 0092';
+        return `
+          <div class="max-w-2xl mx-auto space-y-6">
+            <!-- Card Visual -->
+            <div class="bank-card-gradient rounded-3xl p-8 text-white relative overflow-hidden flex flex-col justify-between min-h-[220px]">
+              <div class="flex justify-between items-start">
+                <div class="text-lg font-extrabold tracking-widest text-purple-300">Vault<span class="text-white">X</span> PLATINUM</div>
+                <i class="fas fa-wifi text-lg text-purple-300"></i>
+              </div>
+
+              <div class="my-6">
+                <div class="font-mono text-xl sm:text-2xl tracking-[0.2em] font-bold text-purple-100">${cardNum}</div>
+              </div>
+
+              <div class="flex justify-between items-end text-xs uppercase font-semibold text-purple-300">
+                <div>
+                  <span class="text-[9px] block text-purple-400">Cardholder</span>
+                  <span class="text-sm font-bold text-white">${name}</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-[9px] block text-purple-400">Expires</span>
+                  <span class="text-sm font-bold text-white">${user.expiry || '12/28'}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Actions -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h4 class="font-bold text-white text-sm">Need a Replacement Card?</h4>
+                <p class="text-xs text-slate-400">Generate a fresh virtual number & CVV instantly.</p>
+              </div>
+              <button onclick="requestNewCard()" class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg transition-transform hover:scale-105 active:scale-95">
+                <i class="fas fa-rotate mr-1"></i> Generate New Card
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      // TAB 7: SETTINGS & TERMINATION
+      if (state.dashTab === 'settings') {
+        return `
+          <div class="max-w-xl mx-auto space-y-8">
+            <!-- Update Info Form -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border border-purple-500/25 space-y-6">
+              <div class="flex items-center gap-3 border-b border-purple-500/15 pb-4">
+                <div class="w-10 h-10 rounded-xl bg-purple-600/20 text-purple-300 flex items-center justify-center font-bold">
+                  <i class="fas fa-user-pen"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-bold text-white">Modify Account Details</h3>
+                  <p class="text-xs text-slate-400">Update your profile or change your 4-digit PIN</p>
+                </div>
+              </div>
+
+              <form id="updateForm" class="space-y-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Full Name</label>
+                  <input type="text" id="up_name" placeholder="${name}"
+                    class="w-full px-4 py-2.5 rounded-xl bg-[#0F0826] border border-purple-500/25 text-white text-sm focus:outline-none focus:border-purple-400">
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Email Address</label>
+                  <input type="email" id="up_email" placeholder="${esc(user.email)}"
+                    class="w-full px-4 py-2.5 rounded-xl bg-[#0F0826] border border-purple-500/25 text-white text-sm focus:outline-none focus:border-purple-400">
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Change 4-Digit PIN</label>
+                  <input type="password" id="up_pin" maxlength="4" placeholder="•••• (leave blank to keep current)"
+                    class="w-full px-4 py-2.5 rounded-xl bg-[#0F0826] border border-purple-500/25 text-white text-lg font-mono tracking-widest focus:outline-none focus:border-purple-400">
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-purple-600/30">
                   Save Changes
                 </button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <div class="bg-[#181b21] rounded-3xl shadow-md border border-rose-200 overflow-hidden">
-          <div class="bg-rose-500/10 p-6 border-b border-rose-200">
-            <h3 class="text-xl font-bold text-rose-800 flex items-center gap-2"><i class="fas fa-exclamation-triangle text-rose-600"></i> Terminate Account</h3>
-          </div>
-          <div class="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <p class="text-slate-100 font-medium mb-1">Permanently delete your VaultX profile.</p>
-              <p class="text-sm text-slate-100/70 max-w-lg">Once you delete your account, all your records, including your balance ledger, will be permanently erased. This action cannot be undone.</p>
+              </form>
             </div>
-            <button id="deleteBtn" class="shrink-0 bg-[#181b21] border-2 border-rose-600 text-rose-600 hover:bg-rose-600 hover:text-slate-200 font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2">
-              <i class="fas fa-trash-alt"></i> Delete Account
-            </button>
+
+            <!-- Danger Zone: Close Account -->
+            <div class="p-6 rounded-3xl bg-rose-950/20 border border-rose-500/25 space-y-4">
+              <div class="flex items-center gap-3">
+                <i class="fas fa-triangle-exclamation text-rose-400 text-xl"></i>
+                <div>
+                  <h4 class="font-bold text-rose-300 text-sm">Account Termination</h4>
+                  <p class="text-xs text-slate-400">Permanently close this account and erase ledger records.</p>
+                </div>
+              </div>
+              <button id="deleteBtn" class="w-full py-3 bg-rose-600/20 hover:bg-rose-600 border border-rose-500/40 text-rose-300 hover:text-white font-bold rounded-xl text-sm transition-all">
+                Close & Delete Account
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
-    `;
-  }
-}
+        `;
+      }
 
-function wireEvents(){
-  const user = state.user;
-  
-  // Navigation for both states
-  document.querySelectorAll('[data-tab]').forEach(btn => {
-    btn.onclick = (e) => { 
-      e.preventDefault();
-      state.authTab = btn.dataset.tab; 
-      render(); 
-    };
-  });
+      return '';
+    }
 
-  // Auth Events
-  if (!user){
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) loginForm.onsubmit = async e => {
-      e.preventDefault();
-      const btn = loginForm.querySelector('button');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
-      
-      const acc = document.getElementById('li_acc').value.trim();
-      const pinRaw = document.getElementById('li_pin').value.trim();
-      
-      if (!acc || !pinRaw){ 
-        showToast("Enter both Email/Account No and PIN.", false);
-        btn.innerHTML = originalText;
+    // =================================================================
+    // 4. EVENT WIRE-UP ENGINE
+    // =================================================================
+    function wireEvents() {
+      const user = state.user;
+
+      // Tab switcher across landing/auth
+      document.querySelectorAll('[data-tab]').forEach(btn => {
+        btn.onclick = (e) => {
+          e.preventDefault();
+          state.authTab = btn.dataset.tab;
+          render();
+        };
+      });
+
+      // Unauthenticated actions (Login & Register)
+      if (!user) {
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+          loginForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = loginForm.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+
+            const acc = document.getElementById('li_acc').value.trim();
+            const pinRaw = document.getElementById('li_pin').value.trim();
+
+            if (!acc || !pinRaw) {
+              showToast("Please provide Account Number/Email and PIN.", false);
+              btn.innerHTML = originalText;
+              return;
+            }
+
+            const res = await apiCall('/api/login', { accountNo: acc, pin: pinRaw });
+            if (res.ok) {
+              state.user = res.user;
+              state.sessionPin = String(pinRaw);
+              state.dashTab = 'dashboard';
+              showToast("Authentication successful! Welcome back.", true);
+            } else {
+              showToast(res.msg || "Invalid credentials.", false);
+              btn.innerHTML = originalText;
+            }
+            render();
+          };
+        }
+
+        const createForm = document.getElementById('createForm');
+        if (createForm) {
+          createForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = createForm.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+            const name = document.getElementById('cr_name').value.trim();
+            const age = Number(document.getElementById('cr_age').value);
+            const email = document.getElementById('cr_email').value.trim();
+            const phone = document.getElementById('cr_phone') ? document.getElementById('cr_phone').value.trim() : '';
+            const accType = document.getElementById('cr_acctype') ? document.getElementById('cr_acctype').value : 'Savings';
+            const pin = document.getElementById('cr_pin').value.trim();
+
+            // Instant Client-side validations (matching poster business rules)
+            if (age < 18) {
+              showToast("Account creation denied: You must be at least 18 years old.", false);
+              btn.innerHTML = originalText;
+              return;
+            }
+
+            if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+              showToast("PIN error: PIN must be strictly a 4-digit number.", false);
+              btn.innerHTML = originalText;
+              return;
+            }
+
+            const res = await apiCall('/api/create', { name, age, email, phone, accType, pin });
+            if (res.ok) {
+              showToast("Account created successfully! Welcome bonus credited.", true);
+              state.user = res.user;
+              state.sessionPin = String(pin);
+              state.dashTab = 'dashboard';
+            } else {
+              showToast(res.msg || "Account creation failed.", false);
+              btn.innerHTML = originalText;
+            }
+            render();
+          };
+        }
         return;
       }
-      
-      const res = await apiCall('/api/login', { accountNo: acc, pin: pinRaw });
-      if (res.ok){
-        state.user = res.user;
-        state.sessionPin = String(pinRaw);
-        state.dashTab = 'dashboard';
-        showToast("Authentication Successful.", true);
-      } else {
-        showToast(res.msg, false);
-        btn.innerHTML = originalText;
+
+      // Authenticated Dashboard Actions
+      const logoutBtn = document.getElementById('logoutLink');
+      const mobileLogoutBtn = document.getElementById('mobileLogout');
+      const doLogout = () => {
+        state.user = null;
+        state.sessionPin = null;
+        state.authTab = 'landing';
+        showToast("Signed out securely.", true);
+        render();
+      };
+      if (logoutBtn) logoutBtn.onclick = doLogout;
+      if (mobileLogoutBtn) mobileLogoutBtn.onclick = doLogout;
+
+      // Dashboard navigation tabs
+      document.querySelectorAll('[data-dtab]').forEach(btn => {
+        btn.onclick = () => {
+          state.dashTab = btn.dataset.dtab;
+          render();
+        };
+      });
+
+      // 1. Deposit Form
+      const depositForm = document.getElementById('depositForm');
+      if (depositForm) {
+        depositForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const amt = Number(document.getElementById('dep_amt').value);
+          const accNo = user.accountNo || user['accountNo.'];
+          const res = await apiCall('/api/deposit', { accountNo: accNo, pin: state.sessionPin, amount: amt });
+          if (res.ok) {
+            showToast(`Deposited ₹${amt.toLocaleString()} successfully!`, true);
+            await refreshUser();
+            state.dashTab = 'dashboard';
+          } else {
+            showToast(res.msg || "Deposit failed.", false);
+          }
+          render();
+        };
       }
-      render();
-    };
 
-    const createForm = document.getElementById('createForm');
-    if (createForm) createForm.onsubmit = async e => {
-      e.preventDefault();
-      const btn = createForm.querySelector('button');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
-
-      const name = document.getElementById('cr_name').value;
-      const age = Number(document.getElementById('cr_age').value);
-      const email = document.getElementById('cr_email').value;
-      const pin = document.getElementById('cr_pin').value;
-      
-      const res = await apiCall('/api/create', { name, age, email, pin });
-      if (res.ok){
-        showToast("Account Created successfully!", true);
-        state.user = res.user;
-        state.sessionPin = String(pin);
-        state.dashTab = 'dashboard';
-      } else {
-        showToast(res.msg, false);
-        btn.innerHTML = originalText;
+      // 2. Withdraw Form
+      const withdrawForm = document.getElementById('withdrawForm');
+      if (withdrawForm) {
+        withdrawForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const amt = Number(document.getElementById('wd_amt').value);
+          const accNo = user.accountNo || user['accountNo.'];
+          const res = await apiCall('/api/withdraw', { accountNo: accNo, pin: state.sessionPin, amount: amt });
+          if (res.ok) {
+            showToast(`Withdrew ₹${amt.toLocaleString()} successfully!`, true);
+            await refreshUser();
+            state.dashTab = 'dashboard';
+          } else {
+            showToast(res.msg || "Withdrawal failed.", false);
+          }
+          render();
+        };
       }
-      render();
-    };
-    return;
-  }
 
-  // Dashboard Events
-  const logoutBtn = document.getElementById('logoutLink');
-  const mobileLogoutBtn = document.getElementById('mobileLogout');
-  
-  const doLogout = () => {
-    state.user = null; state.sessionPin = null; state.authTab = 'landing';
-    showToast("Logged out securely.", true);
-    render();
-  };
-  
-  if (logoutBtn) logoutBtn.onclick = doLogout;
-  if (mobileLogoutBtn) mobileLogoutBtn.onclick = doLogout;
+      // 3. Transfer Form
+      const transferForm = document.getElementById('transferForm');
+      if (transferForm) {
+        transferForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const target = document.getElementById('tr_target').value.trim();
+          const amt = Number(document.getElementById('tr_amt').value);
+          const accNo = user.accountNo || user['accountNo.'];
+          const res = await apiCall('/api/transfer', { accountNo: accNo, pin: state.sessionPin, targetAccount: target, amount: amt });
+          if (res.ok) {
+            showToast(`Transferred ₹${amt.toLocaleString()} to ${target}!`, true);
+            await refreshUser();
+            state.dashTab = 'dashboard';
+          } else {
+            showToast(res.msg || "Transfer failed.", false);
+          }
+          render();
+        };
+      }
 
-  document.querySelectorAll('[data-dtab]').forEach(btn => {
-    btn.onclick = () => { state.dashTab = btn.dataset.dtab; render(); };
-  });
+      // 4. Update Profile Form
+      const updateForm = document.getElementById('updateForm');
+      if (updateForm) {
+        updateForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const name = document.getElementById('up_name').value.trim();
+          const email = document.getElementById('up_email').value.trim();
+          const pin = document.getElementById('up_pin').value.trim();
+          const accNo = user.accountNo || user['accountNo.'];
 
-  const depositForm = document.getElementById('depositForm');
-  if (depositForm) depositForm.onsubmit = async e => {
-    e.preventDefault();
-    const btn = depositForm.querySelector('button');
-    const oldHtml = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
+          const res = await apiCall('/api/update', {
+            accountNo: accNo,
+            pin: state.sessionPin,
+            name: name || null,
+            email: email || null,
+            newPin: pin || null
+          });
 
-    const amt = Number(document.getElementById('dep_amt').value);
-    const res = await apiCall('/api/deposit', { accountNo: user.accountNo || user['accountNo.'], pin: state.sessionPin, amount: amt });
-    if (res.ok) {
-      showToast(`Successfully deposited ₹${amt.toLocaleString()}`, true);
-      await refreshUser();
-      state.dashTab = 'dashboard';
-    } else {
-      showToast(res.msg, false);
-      btn.innerHTML = oldHtml;
+          if (res.ok) {
+            if (res.newPin) state.sessionPin = String(res.newPin);
+            await refreshUser();
+            showToast("Profile details updated successfully!", true);
+          } else {
+            showToast(res.msg || "Update failed.", false);
+          }
+          render();
+        };
+      }
+
+      // 5. Delete Account
+      const deleteBtn = document.getElementById('deleteBtn');
+      if (deleteBtn) {
+        deleteBtn.onclick = async () => {
+          if (confirm("Are you completely sure you want to close this account? This action is permanent.")) {
+            const accNo = user.accountNo || user['accountNo.'];
+            const res = await apiCall('/api/delete', { accountNo: accNo, pin: state.sessionPin });
+            if (res.ok) {
+              state.user = null;
+              state.sessionPin = null;
+              state.authTab = 'landing';
+              showToast("Account deleted permanently.", true);
+            } else {
+              showToast(res.msg || "Deletion failed.", false);
+            }
+            render();
+          }
+        };
+      }
     }
-    render();
-  };
 
-  const withdrawForm = document.getElementById('withdrawForm');
-  if (withdrawForm) withdrawForm.onsubmit = async e => {
-    e.preventDefault();
-    const btn = withdrawForm.querySelector('button');
-    const oldHtml = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
-
-    const amt = Number(document.getElementById('wd_amt').value);
-    const res = await apiCall('/api/withdraw', { accountNo: user.accountNo || user['accountNo.'], pin: state.sessionPin, amount: amt });
-    if (res.ok) {
-      showToast(`Successfully withdrew ₹${amt.toLocaleString()}`, true);
-      await refreshUser();
-      state.dashTab = 'dashboard';
-    } else {
-      showToast(res.msg, false);
-      btn.innerHTML = oldHtml;
-    }
-    render();
-  };
-
-
-  const transferForm = document.getElementById('transferForm');
-  if (transferForm) transferForm.onsubmit = async e => {
-    e.preventDefault();
-    const btn = transferForm.querySelector('button');
-    const oldHtml = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
-
-    const target = document.getElementById('tr_target').value;
-    const amt = Number(document.getElementById('tr_amt').value);
-    const res = await apiCall('/api/transfer', { accountNo: user.accountNo || user['accountNo.'], pin: state.sessionPin, targetAccount: target, amount: amt });
-    if (res.ok) {
-      showToast(`Successfully transferred ₹${amt.toLocaleString()}`, true);
-      await refreshUser();
-      state.dashTab = 'dashboard';
-    } else {
-      showToast(res.msg, false);
-      btn.innerHTML = oldHtml;
-    }
-    render();
-  };
-
-  const updateForm = document.getElementById('updateForm');
-  if (updateForm) updateForm.onsubmit = async e => {
-    e.preventDefault();
-    const btn = updateForm.querySelector('button');
-    const oldHtml = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i>';
-
-    const name = document.getElementById('up_name').value;
-    const email = document.getElementById('up_email').value;
-    const pin = document.getElementById('up_pin').value;
-    const res = await apiCall('/api/update', { accountNo: user.accountNo || user['accountNo.'], pin: state.sessionPin, name: name||null, email: email||null, newPin: pin||null });
-    
-    if (res.ok) {
-        state.sessionPin = String(res.newPin);
+    // Virtual card generation helper
+    async function requestNewCard() {
+      if (!state.user) return;
+      const accNo = state.user.accountNo || state.user['accountNo.'];
+      const res = await apiCall('/api/new_card', { accountNo: accNo, pin: String(state.sessionPin) });
+      showToast(res.msg || "New card generated!", res.ok);
+      if (res.ok) {
         await refreshUser();
-        showToast("Account holder details updated successfully.", true);
-    } else {
-        showToast(res.msg, false);
-    }
-    btn.innerHTML = oldHtml;
-    render();
-  };
-
-  const deleteBtn = document.getElementById('deleteBtn');
-  if (deleteBtn) deleteBtn.onclick = async () => {
-    if (confirm("Are you entirely sure you want to delete your account? This action is irreversible.")) {
-      const btnOldHtml = deleteBtn.innerHTML;
-      deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-      const res = await apiCall('/api/delete', { accountNo: user.accountNo || user['accountNo.'], pin: state.sessionPin });
-      if (res.ok){
-        state.user = null; state.sessionPin = null; state.authTab = 'landing';
-        showToast("Account successfully deleted from the database records.", true);
-      } else {
-        showToast(res.msg, false);
-        deleteBtn.innerHTML = btnOldHtml;
+        render();
       }
-      render();
     }
-  };
-}
+    window.requestNewCard = requestNewCard;
 
-async function requestNewCard() {
-  if (!state.user) return;
-  const accNo = state.user.accountNo || state.user['accountNo.'];
-  const res = await apiCall('/api/new_card', { accountNo: accNo, pin: String(state.sessionPin) });
-  showToast(res.msg, res.ok);
-  if (res.ok) {
-    await refreshUser();
+    // Boot App
     render();
-  }
-}
-window.requestNewCard = requestNewCard;
+  </script>
 
-// Initial render
-render();
-</script>
-
-<!-- Chatbot Widget -->
-<div id="chat-widget" class="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
-  
-  <!-- Chat Window -->
-  <div id="chat-window" class="hidden w-80 sm:w-96 bg-[#0f172a]/90 backdrop-blur-2xl border-white/10 rounded-2xl shadow-2xl border border-white/10 mb-4 overflow-hidden flex-col h-[500px] max-h-[80vh] fade-in">
-    <!-- Header -->
-    <div class="bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 p-4 flex justify-between items-center shrink-0">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center">
-          <i class="fas fa-robot text-sm"></i>
+  <!-- Floating Chat Widget (Gemini AI Assistant) -->
+  <div id="chat-widget" class="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
+    <!-- Chat Window -->
+    <div id="chat-window" class="hidden w-80 sm:w-96 bg-[#0E0822]/95 backdrop-blur-2xl border border-purple-500/30 rounded-3xl shadow-2xl mb-4 overflow-hidden flex-col h-[480px] max-h-[80vh]">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-purple-700 to-indigo-700 text-white p-4 flex justify-between items-center shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-purple-500/30 flex items-center justify-center text-white">
+            <i class="fas fa-robot text-sm"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm">VaultX AI Assistant</h4>
+            <p class="text-[10px] text-purple-200">Powered by Gemini & Python</p>
+          </div>
         </div>
-        <div>
-          <h4 class="font-bold text-sm">VaultX Assistant</h4>
-          <p class="text-[10px] text-slate-200/70">Powered by Gemini AI</p>
-        </div>
-      </div>
-      <button onclick="toggleChat()" class="text-slate-100/70 hover:text-slate-200 transition-colors">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    
-    <!-- Messages Area -->
-    <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-transparent flex flex-col gap-3 text-sm">
-      <div class="flex justify-start">
-        <div class="bg-[#181b21] border border-slate-700 text-emerald-500 font-handwriting text-2xl font-bold p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] leading-relaxed">Hello! I am your VaultX AI Assistant. How can I help you today?</div>
-      </div>
-    </div>
-    
-    <!-- Input Area -->
-    <div class="p-3 bg-[#181b21] border-t border-white/5 shrink-0">
-      <form id="chat-form" class="relative flex items-center">
-        <input type="text" id="chat-input" autocomplete="off" placeholder="Ask something..." required class="w-full pl-4 pr-12 py-3 rounded-xl border border-white/10 bg-black/20 focus:bg-black/40 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-brass outline-none transition-all">
-        <button type="submit" class="absolute right-2 w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-200 rounded-lg flex items-center justify-center hover:from-cyan-400 hover:to-blue-500 transition-colors shadow-sm">
-          <i class="fas fa-paper-plane text-xs"></i>
+        <button onclick="toggleChat()" class="text-purple-200 hover:text-white p-1">
+          <i class="fas fa-times"></i>
         </button>
-      </form>
+      </div>
+
+      <!-- Messages Stream -->
+      <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs sm:text-sm">
+        <div class="flex justify-start">
+          <div class="bg-purple-950/60 border border-purple-500/20 text-purple-200 p-3 rounded-2xl rounded-tl-sm max-w-[85%]">
+            Hello! I am your VaultX Assistant. Ask me anything about banking rules, OOP architecture, or managing your account!
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Form -->
+      <div class="p-3 bg-[#0A051A] border-t border-purple-500/20">
+        <form id="chat-form" class="relative flex items-center">
+          <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off" required
+            class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-[#140C2E] border border-purple-500/30 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-purple-400">
+          <button type="submit" class="absolute right-1.5 w-7 h-7 rounded-lg bg-purple-600 hover:bg-purple-500 text-white flex items-center justify-center text-xs transition-colors">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
     </div>
+
+    <!-- Toggle FAB -->
+    <button id="chat-toggle" onclick="toggleChat()" class="w-13 h-13 p-3.5 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 hover:from-purple-500 hover:to-indigo-400 text-white shadow-xl shadow-purple-600/40 transition-transform hover:scale-110 active:scale-95 flex items-center justify-center">
+      <i class="fas fa-robot text-xl"></i>
+    </button>
   </div>
-  
-  <!-- Floating Toggle Button -->
-  <button id="chat-toggle" onclick="toggleChat()" class="w-14 h-14 bg-[#0f1115] hover:bg-[#0f1115] text-slate-200 rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110 active:scale-95 group">
-    <i class="fas fa-comment-dots text-2xl group-hover:hidden"></i>
-    <i class="fas fa-robot text-2xl hidden group-hover:block"></i>
-  </button>
-</div>
 
-<script>
-  function toggleChat() {
-    const window = document.getElementById('chat-window');
-    if (window.classList.contains('hidden')) {
-      window.classList.remove('hidden');
-      window.classList.add('flex');
-    } else {
-      window.classList.add('hidden');
-      window.classList.remove('flex');
+  <script>
+    function toggleChat() {
+      const w = document.getElementById('chat-window');
+      w.classList.toggle('hidden');
+      w.classList.toggle('flex');
     }
-  }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // We bind the chat form on next tick to ensure elements exist
-    setTimeout(() => {
+    document.addEventListener('DOMContentLoaded', () => {
       const chatForm = document.getElementById('chat-form');
       if (chatForm) {
         chatForm.onsubmit = async (e) => {
@@ -1091,50 +1395,50 @@ render();
           const input = document.getElementById('chat-input');
           const msg = input.value.trim();
           if (!msg) return;
-          
+
           input.value = '';
           const messagesArea = document.getElementById('chat-messages');
-          
-          // Add User Message
+
+          // User Message
           messagesArea.innerHTML += `
             <div class="flex justify-end">
-              <div class="bg-navy text-slate-200 p-3 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] leading-relaxed font-sans">
-                ${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
+              <div class="bg-purple-600 text-white p-3 rounded-2xl rounded-tr-sm max-w-[85%] text-xs">
+                ${esc(msg)}
               </div>
             </div>
           `;
           messagesArea.scrollTop = messagesArea.scrollHeight;
-          
-          // Add Loading Indicator
+
+          // Thinking Indicator
           const loadId = 'loading-' + Date.now();
           messagesArea.innerHTML += `
             <div id="${loadId}" class="flex justify-start">
-              <div class="bg-[#181b21] border border-white/10 text-slate-100/70 p-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-2">
+              <div class="bg-purple-950/60 border border-purple-500/20 text-purple-300 p-2.5 rounded-2xl rounded-tl-sm text-xs flex items-center gap-2">
                 <i class="fas fa-circle-notch fa-spin"></i> Thinking...
               </div>
             </div>
           `;
           messagesArea.scrollTop = messagesArea.scrollHeight;
-          
+
           try {
             const data = await apiCall('/api/chat', { message: msg });
-            
-            document.getElementById(loadId).remove();
-            
-            // Add Bot Message
+            const loader = document.getElementById(loadId);
+            if (loader) loader.remove();
+
             messagesArea.innerHTML += `
               <div class="flex justify-start">
-                <div class="bg-[#181b21] border border-slate-700 text-emerald-500 font-handwriting text-2xl font-bold p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] leading-relaxed whitespace-pre-wrap">
-                  ${data.reply ? data.reply.replace(/</g, "&lt;").replace(/>/g, "&gt;") : "Error connecting to AI."}
+                <div class="bg-purple-950/60 border border-purple-500/20 text-purple-200 p-3 rounded-2xl rounded-tl-sm max-w-[85%] text-xs whitespace-pre-wrap">
+                  ${data.reply ? esc(data.reply) : "Could not reach AI."}
                 </div>
               </div>
             `;
           } catch(err) {
-            document.getElementById(loadId).remove();
+            const loader = document.getElementById(loadId);
+            if (loader) loader.remove();
             messagesArea.innerHTML += `
               <div class="flex justify-start">
-                <div class="bg-rose-500/10 border border-rose-200 text-rose-700 p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] leading-relaxed">
-                  Network error.
+                <div class="bg-rose-950/60 border border-rose-500/20 text-rose-300 p-3 rounded-2xl rounded-tl-sm text-xs">
+                  Error connecting to assistant.
                 </div>
               </div>
             `;
@@ -1142,9 +1446,8 @@ render();
           messagesArea.scrollTop = messagesArea.scrollHeight;
         };
       }
-    }, 100);
-  });
-</script>
+    });
+  </script>
 
 </body>
 </html>
