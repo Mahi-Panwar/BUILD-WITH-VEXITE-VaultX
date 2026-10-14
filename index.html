@@ -1623,7 +1623,22 @@
         render();
       }
     }
-    window.requestNewCard = requestNewCard;
+    // Primary Application Renderer
+    function render() {
+      const app = document.getElementById('app');
+      if (!app) return;
+
+      if (state.user) {
+        app.innerHTML = dashboardLayoutHTML(state.user);
+      } else if (state.authTab === 'landing') {
+        app.innerHTML = landingPageHTML();
+      } else {
+        app.innerHTML = authLayoutHTML();
+      }
+
+      wireEvents();
+    }
+    window.render = render;
 
     // Boot App
     render();
