@@ -55,6 +55,7 @@ def get_home():
         return f.read()
 
 @app.post("/api/create")
+@app.post("/create")
 def create_account(req: CreateAccountRequest):
     user, msg = Bank.create_account(req.name, req.age, req.email, req.pin, req.phone, req.address, req.accType)
     if user:
@@ -62,6 +63,7 @@ def create_account(req: CreateAccountRequest):
     return {"ok": False, "msg": msg}
 
 @app.post("/api/login")
+@app.post("/login")
 def login(req: AuthRequest):
     user = Bank.find_user(req.accountNo, req.pin)
     if user:
@@ -69,11 +71,13 @@ def login(req: AuthRequest):
     return {"ok": False, "msg": "No account found with that account number and PIN."}
 
 @app.post("/api/deposit")
+@app.post("/deposit")
 def deposit(req: DepositWithdrawRequest):
     ok, msg = Bank.deposit(req.accountNo, req.pin, req.amount)
     return {"ok": ok, "msg": msg}
 
 @app.post("/api/withdraw")
+@app.post("/withdraw")
 def withdraw(req: DepositWithdrawRequest):
     ok, msg = Bank.withdraw(req.accountNo, req.pin, req.amount)
     return {"ok": ok, "msg": msg}
@@ -94,31 +98,37 @@ class ChatRequest(BaseModel):
     message: str
 
 @app.post("/api/loan")
+@app.post("/loan")
 def apply_loan(req: LoanRequest):
     ok, msg = Bank.apply_loan(req.accountNo, req.pin, req.loanType, req.amount)
     return {"ok": ok, "msg": msg}
 
 @app.post("/api/new_card")
+@app.post("/new_card")
 def new_card(req: AuthRequest):
     ok, msg = Bank.generate_new_card(req.accountNo, req.pin)
     return {"ok": ok, "msg": msg}
 
 @app.post("/api/update")
+@app.post("/update")
 def update(req: UpdateRequest):
     ok, msg = Bank.update_user(req.accountNo, req.pin, req.name, req.email, req.newPin, req.phone, req.address)
     return {"ok": ok, "msg": msg, "newPin": req.newPin if req.newPin and ok else req.pin}
 
 @app.post("/api/delete")
+@app.post("/delete")
 def delete_account(req: AuthRequest):
     ok, msg = Bank.delete_user(req.accountNo, req.pin)
     return {"ok": ok, "msg": msg}
 
 @app.post("/api/transfer")
+@app.post("/transfer")
 def transfer(req: TransferRequest):
     ok, msg = Bank.transfer(req.accountNo, req.pin, req.targetAccount, req.amount)
     return {"ok": ok, "msg": msg}
 
 @app.post("/api/chat")
+@app.post("/chat")
 def chat_with_gemini(req: ChatRequest):
     import os
     import requests
