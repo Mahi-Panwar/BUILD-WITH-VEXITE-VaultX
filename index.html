@@ -69,7 +69,9 @@ let state = {
 
 async function apiCall(endpoint, payload) {
   try {
-    const url = endpoint.startsWith('http') ? endpoint : 'http://127.0.0.1:8000' + endpoint;
+    const isFile = window.location.protocol === 'file:';
+    const baseUrl = isFile ? 'http://127.0.0.1:8000' : '';
+    const url = endpoint.startsWith('http') ? endpoint : baseUrl + endpoint;
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -995,7 +997,17 @@ function wireEvents(){
       render();
     }
   };
+async function requestNewCard() {
+  if (!state.user) return;
+  const accNo = state.user.accountNo || state.user['accountNo.'];
+  const res = await apiCall('/api/new_card', { accountNo: accNo, pin: String(state.sessionPin) });
+  showToast(res.msg, res.ok);
+  if (res.ok) {
+    await refreshUser();
+    render();
+  }
 }
+window.requestNewCard = requestNewCard;
 
 // Initial render
 render();
@@ -1095,13 +1107,7 @@ render();
           messagesArea.scrollTop = messagesArea.scrollHeight;
           
           try {
-            const url = 'http://127.0.0.1:8000/api/chat';
-            const res = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ message: msg })
-            });
-            const data = await res.json();
+            const data = await apiCall('/api/chat', { message: msg });
             
             document.getElementById(loadId).remove();
             

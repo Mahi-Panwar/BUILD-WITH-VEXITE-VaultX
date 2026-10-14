@@ -2,14 +2,35 @@ import json
 import os
 import random
 
-DATA_FILE = "data.json"
+import shutil
+
+# On Vercel / serverless environments, the root directory is read-only; use /tmp
+if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+    DATA_FILE = "/tmp/data.json"
+    _REPO_DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data.json")
+    if not os.path.exists(DATA_FILE) and os.path.exists(_REPO_DATA):
+        try:
+            shutil.copyfile(_REPO_DATA, DATA_FILE)
+        except Exception:
+            pass
+else:
+    DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data.json")
 
 class Bank:
     @staticmethod
     def _load_data():
-        if not os.path.exists(DATA_FILE):
+        _repo_data = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data.json")
+        if (os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME")) and not os.path.exists(DATA_FILE):
+            if os.path.exists(_repo_data):
+                try:
+                    shutil.copyfile(_repo_data, DATA_FILE)
+                except Exception:
+                    pass
+
+        target_file = DATA_FILE if os.path.exists(DATA_FILE) else _repo_data
+        if not os.path.exists(target_file):
             return []
-        with open(DATA_FILE, "r") as f:
+        with open(target_file, "r") as f:
             try:
                 return json.load(f)
             except json.JSONDecodeError:
@@ -17,8 +38,16 @@ class Bank:
 
     @staticmethod
     def _save_data(data):
-        with open(DATA_FILE, "w") as f:
-            json.dump(data, f, indent=4)
+        try:
+            with open(DATA_FILE, "w") as f:
+                json.dump(data, f, indent=4)
+        except Exception as e:
+            fallback = "/tmp/data.json"
+            try:
+                with open(fallback, "w") as f:
+                    json.dump(data, f, indent=4)
+            except Exception:
+                print(f"Error saving data: {e}")
 
     @staticmethod
     def gen_account_number(accounts):

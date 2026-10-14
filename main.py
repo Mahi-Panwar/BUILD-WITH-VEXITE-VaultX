@@ -44,9 +44,14 @@ class UpdateRequest(BaseModel):
     address: Optional[str] = None
     newPin: Optional[str] = None
 
+import os
+
 @app.get("/", response_class=HTMLResponse)
 def get_home():
-    with open("index.html", "r", encoding="utf-8") as f:
+    html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
+    if not os.path.exists(html_path):
+        html_path = "index.html"
+    with open(html_path, "r", encoding="utf-8") as f:
         return f.read()
 
 @app.post("/api/create")
