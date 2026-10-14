@@ -1005,6 +1005,8 @@ function wireEvents(){
       render();
     }
   };
+}
+
 async function requestNewCard() {
   if (!state.user) return;
   const accNo = state.user.accountNo || state.user['accountNo.'];
