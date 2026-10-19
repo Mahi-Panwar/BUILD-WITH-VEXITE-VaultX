@@ -33,7 +33,7 @@ class AuthRequest(BaseModel):
 class DepositWithdrawRequest(BaseModel):
     accountNo: str
     pin: str
-    amount: int
+    amount: float
 
 class UpdateRequest(BaseModel):
     accountNo: str
@@ -103,16 +103,30 @@ class TransferRequest(BaseModel):
     accountNo: str
     pin: str
     targetAccount: str
-    amount: int
+    amount: float
 
 class LoanRequest(BaseModel):
     accountNo: str
     pin: str
     loanType: str
-    amount: int
+    amount: float
 
 class ChatRequest(BaseModel):
     message: str
+
+@app.post("/api/sync")
+@app.post("/sync")
+def sync_account(req: dict):
+    user_data = req.get("user")
+    if not user_data:
+        return {"ok": False, "msg": "Missing user payload."}
+    ok, msg = Bank.upsert_account(user_data)
+    return {"ok": ok, "msg": msg}
+
+@app.get("/api/directory")
+@app.get("/directory")
+def get_directory():
+    return {"ok": True, "accounts": Bank.get_public_directory()}
 
 @app.post("/api/loan")
 @app.post("/loan")

@@ -80,32 +80,74 @@ class Bank:
         user = {
             "name": name,
             "age": age,
-            "email": email,
-            "pin": int(pin),
-            "phone": phone,
-            "address": address,
+            "email": email.strip(),
+            "pin": str(pin).strip(),
+            "phone": phone.strip() if phone else "",
+            "address": address.strip() if address else "",
             "acc_type": acc_type,
             "accountNo": acc_no,
-            "balance": 0,
+            "balance": 450,
             "transactions": [
                 {"date": timestamp, "type": "CREATE", "amount": 0, "balance": 0, "detail": "Account initialized."},
                 {"date": timestamp, "type": "DEPOSIT", "amount": 500, "balance": 500, "detail": "VaultX Welcome Bonus!"},
                 {"date": timestamp, "type": "WITHDRAWAL", "amount": 50, "balance": 450, "detail": "Account Setup Fee"}
             ]
         }
-        user["balance"] = 450
         accounts.append(user)
         cls._save_data(accounts)
         
         return user, "Account created successfully!"
 
     @classmethod
+    def upsert_account(cls, user_data):
+        if not isinstance(user_data, dict):
+            return False, "Invalid account payload."
+        acc_no = user_data.get("accountNo") or user_data.get("accountNo.")
+        if not acc_no:
+            return False, "Missing account number."
+        
+        accounts = cls._load_data()
+        updated = False
+        for i, a in enumerate(accounts):
+            cur_acc = a.get("accountNo") or a.get("accountNo.")
+            if cur_acc and str(cur_acc).strip().lower() == str(acc_no).strip().lower():
+                # Merge existing with new data
+                accounts[i] = {**a, **user_data}
+                updated = True
+                break
+        if not updated:
+            accounts.append(user_data)
+            
+        cls._save_data(accounts)
+        return True, "Account synchronized successfully."
+
+    @classmethod
+    def get_public_directory(cls):
+        accounts = cls._load_data()
+        directory = []
+        seen = set()
+        for a in accounts:
+            acc_no = a.get("accountNo") or a.get("accountNo.")
+            if acc_no and acc_no not in seen:
+                seen.add(acc_no)
+                directory.append({
+                    "accountNo": acc_no,
+                    "name": a.get("name", "Account Holder"),
+                    "email": a.get("email", ""),
+                    "acc_type": a.get("acc_type", "Savings")
+                })
+        return directory
+
+    @classmethod
     def find_user(cls, identifier, pin):
         accounts = cls._load_data()
+        clean_id = str(identifier).strip().lower()
+        clean_pin = str(pin).strip()
         for a in accounts:
-            a_acc = a.get("accountNo") or a.get("accountNo.")
-            a_email = a.get("email")
-            if (a_acc == identifier or a_email == identifier) and a.get("pin") == int(pin):
+            a_acc = str(a.get("accountNo") or a.get("accountNo.") or "").strip().lower()
+            a_email = str(a.get("email") or "").strip().lower()
+            a_pin = str(a.get("pin") or "").strip()
+            if (a_acc == clean_id or a_email == clean_id) and a_pin == clean_pin:
                 # Auto-populate virtual cards and loans if missing
                 changed = False
                 import random
@@ -126,12 +168,20 @@ class Bank:
     @classmethod
     def deposit(cls, acc_no, pin, amount):
         accounts = cls._load_data()
+        clean_acc = str(acc_no).strip().lower()
+        clean_pin = str(pin).strip()
+        try:
+            amount = round(float(amount), 2)
+        except (ValueError, TypeError):
+            return False, "Invalid deposit amount."
+        if amount <= 0:
+            return False, "Deposit amount must be positive."
+
         for a in accounts:
-            a_acc = a.get("accountNo") or a.get("accountNo.")
-            if a_acc == acc_no and a.get("pin") == int(pin):
-                if amount <= 0:
-                    return False, "Deposit amount must be positive."
-                a["balance"] = a.get("balance", 0) + amount
+            a_acc = str(a.get("accountNo") or a.get("accountNo.") or "").strip().lower()
+            a_pin = str(a.get("pin") or "").strip()
+            if a_acc == clean_acc and a_pin == clean_pin:
+                a["balance"] = round(float(a.get("balance", 0)) + amount, 2)
                 
                 import datetime
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -139,20 +189,29 @@ class Bank:
                 a["transactions"].append({"date": timestamp, "type": "DEPOSIT", "amount": amount, "balance": a["balance"], "detail": "Cash deposit"})
                 
                 cls._save_data(accounts)
-                return True, f"Deposited Rs. {amount}. New balance: Rs. {a['balance']}."
+                return True, f"Deposited Rs. {amount:,.2f}. New balance: Rs. {a['balance']:,.2f}."
         return False, "Invalid account number or PIN."
 
     @classmethod
     def withdraw(cls, acc_no, pin, amount):
         accounts = cls._load_data()
+        clean_acc = str(acc_no).strip().lower()
+        clean_pin = str(pin).strip()
+        try:
+            amount = round(float(amount), 2)
+        except (ValueError, TypeError):
+            return False, "Invalid withdrawal amount."
+        if amount <= 0:
+            return False, "Withdrawal amount must be positive."
+
         for a in accounts:
-            a_acc = a.get("accountNo") or a.get("accountNo.")
-            if a_acc == acc_no and a.get("pin") == int(pin):
-                if amount <= 0:
-                    return False, "Withdrawal amount must be positive."
-                if a.get("balance", 0) < amount:
-                    return False, "Insufficient balance."
-                a["balance"] = a.get("balance", 0) - amount
+            a_acc = str(a.get("accountNo") or a.get("accountNo.") or "").strip().lower()
+            a_pin = str(a.get("pin") or "").strip()
+            if a_acc == clean_acc and a_pin == clean_pin:
+                cur_bal = float(a.get("balance", 0))
+                if cur_bal < amount:
+                    return False, f"Insufficient balance. Current balance: Rs. {cur_bal:,.2f}."
+                a["balance"] = round(cur_bal - amount, 2)
                 
                 import datetime
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -160,57 +219,106 @@ class Bank:
                 a["transactions"].append({"date": timestamp, "type": "WITHDRAWAL", "amount": amount, "balance": a["balance"], "detail": "Cash withdrawal"})
 
                 cls._save_data(accounts)
-                return True, f"Withdrew Rs. {amount}. New balance: Rs. {a['balance']}."
+                return True, f"Withdrew Rs. {amount:,.2f}. New balance: Rs. {a['balance']:,.2f}."
         return False, "Invalid account number or PIN."
 
     @classmethod
     def transfer(cls, from_acc, pin, to_acc, amount):
         accounts = cls._load_data()
+        from_clean = str(from_acc).strip().lower()
+        pin_clean = str(pin).strip()
+        to_clean = str(to_acc).strip().lower()
+        
+        try:
+            amount = round(float(amount), 2)
+        except (ValueError, TypeError):
+            return False, "Invalid transfer amount."
+            
+        if amount <= 0:
+            return False, "Transfer amount must be greater than zero."
+            
         sender = None
+        for a in accounts:
+            a_acc = str(a.get("accountNo") or a.get("accountNo.") or "").strip().lower()
+            a_pin = str(a.get("pin") or "").strip()
+            if a_acc == from_clean and a_pin == pin_clean:
+                sender = a
+                break
+                
+        if not sender:
+            return False, "Authentication failed. Invalid sender account or PIN."
+            
+        sender_acc = str(sender.get("accountNo") or sender.get("accountNo.") or "").strip().lower()
+        sender_email = str(sender.get("email") or "").strip().lower()
+        
+        if to_clean == sender_acc or to_clean == sender_email:
+            return False, "Cannot transfer funds to your own account."
+            
         receiver = None
         for a in accounts:
-            a_acc = a.get("accountNo") or a.get("accountNo.")
-            if a_acc == from_acc and a.get("pin") == int(pin):
-                sender = a
-            if a_acc == to_acc or a.get("email") == to_acc:
+            a_acc = str(a.get("accountNo") or a.get("accountNo.") or "").strip().lower()
+            a_email = str(a.get("email") or "").strip().lower()
+            if a != sender and (a_acc == to_clean or a_email == to_clean):
                 receiver = a
+                break
                 
-        if not sender: return False, "Authentication failed."
-        if not receiver: return False, "Target account not found."
-        if sender == receiver: return False, "Cannot transfer to yourself."
-        if amount <= 0: return False, "Amount must be positive."
-        if sender.get("balance", 0) < amount: return False, "Insufficient balance."
-        
-        sender["balance"] -= amount
-        receiver["balance"] = receiver.get("balance", 0) + amount
+        if not receiver:
+            return False, f"Target account or email '{to_acc}' not found in ledger."
+            
+        cur_bal = float(sender.get("balance", 0))
+        if cur_bal < amount:
+            return False, f"Insufficient balance. Current balance: Rs. {cur_bal:,.2f}."
+            
+        sender["balance"] = round(cur_bal - amount, 2)
+        receiver["balance"] = round(float(receiver.get("balance", 0)) + amount, 2)
         
         import datetime
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
+        rec_acc = receiver.get("accountNo") or receiver.get("accountNo.")
+        snd_acc = sender.get("accountNo") or sender.get("accountNo.")
+        
         if "transactions" not in sender: sender["transactions"] = []
-        sender["transactions"].append({"date": timestamp, "type": "TRANSFER OUT", "amount": amount, "balance": sender["balance"], "detail": f"To {receiver.get('name')}"})
+        sender["transactions"].append({
+            "date": timestamp,
+            "type": "TRANSFER OUT",
+            "amount": amount,
+            "balance": sender["balance"],
+            "detail": f"Sent to {receiver.get('name')} ({rec_acc})"
+        })
         
         if "transactions" not in receiver: receiver["transactions"] = []
-        receiver["transactions"].append({"date": timestamp, "type": "TRANSFER IN", "amount": amount, "balance": receiver["balance"], "detail": f"From {sender.get('name')}"})
+        receiver["transactions"].append({
+            "date": timestamp,
+            "type": "TRANSFER IN",
+            "amount": amount,
+            "balance": receiver["balance"],
+            "detail": f"Received from {sender.get('name')} ({snd_acc})"
+        })
 
         cls._save_data(accounts)
-        return True, f"Successfully transferred Rs. {amount} to {receiver.get('name')}."
-
+        return True, f"Successfully transferred Rs. {amount:,.2f} to {receiver.get('name')} ({rec_acc})."
 
     @classmethod
     def apply_loan(cls, acc_no, pin, loan_type, amount):
         accounts = cls._load_data()
+        clean_acc = str(acc_no).strip().lower()
+        clean_pin = str(pin).strip()
+        try:
+            amount = round(float(amount), 2)
+        except (ValueError, TypeError):
+            return False, "Invalid loan amount."
+        if amount <= 0:
+            return False, "Loan amount must be positive."
+
         for a in accounts:
-            a_acc = a.get("accountNo") or a.get("accountNo.")
-            if a_acc == acc_no and a.get("pin") == int(pin):
-                if amount <= 0:
-                    return False, "Loan amount must be positive."
-                
-                import datetime
+            a_acc = str(a.get("accountNo") or a.get("accountNo.") or "").strip().lower()
+            a_pin = str(a.get("pin") or "").strip()
+            if a_acc == clean_acc and a_pin == clean_pin:
+                import datetime, random
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
                 if "loans" not in a: a["loans"] = []
-                # Approve the loan instantly
                 loan_id = "LN" + "".join([str(random.randint(0,9)) for _ in range(6)])
                 a["loans"].append({
                     "id": loan_id,
@@ -220,8 +328,7 @@ class Bank:
                     "date": timestamp
                 })
                 
-                # Credit the account
-                a["balance"] = a.get("balance", 0) + amount
+                a["balance"] = round(float(a.get("balance", 0)) + amount, 2)
                 
                 if "transactions" not in a: a["transactions"] = []
                 a["transactions"].append({
@@ -233,41 +340,47 @@ class Bank:
                 })
                 
                 cls._save_data(accounts)
-                return True, f"Loan of Rs. {amount} approved and credited to your account!"
+                return True, f"Loan of Rs. {amount:,.2f} approved and credited to your account!"
         return False, "Invalid account number or PIN."
-
 
     @classmethod
     def generate_new_card(cls, acc_no, pin):
         accounts = cls._load_data()
+        clean_acc = str(acc_no).strip().lower()
+        clean_pin = str(pin).strip()
         for a in accounts:
-            a_acc = a.get("accountNo") or a.get("accountNo.")
-            if a_acc == acc_no and a.get("pin") == int(pin):
+            a_acc = str(a.get("accountNo") or a.get("accountNo.") or "").strip().lower()
+            a_pin = str(a.get("pin") or "").strip()
+            if a_acc == clean_acc and a_pin == clean_pin:
                 import random
                 a["card_number"] = "4532" + "".join([str(random.randint(0,9)) for _ in range(12)])
                 a["expiry"] = f"{random.randint(1,12):02d}/{random.randint(26,30)}"
                 a["cvv"] = "".join([str(random.randint(0,9)) for _ in range(3)])
                 cls._save_data(accounts)
-                return True, "New card generated."
+                return True, "New card generated successfully."
         return False, "Authentication failed."
 
     @classmethod
     def update_user(cls, acc_no, pin, name, email, new_pin, phone=None, address=None):
         accounts = cls._load_data()
+        clean_acc = str(acc_no).strip().lower()
+        clean_pin = str(pin).strip()
         for a in accounts:
-            a_acc = a.get("accountNo") or a.get("accountNo.")
-            if a_acc == acc_no and a.get("pin") == int(pin):
+            a_acc = str(a.get("accountNo") or a.get("accountNo.") or "").strip().lower()
+            a_pin = str(a.get("pin") or "").strip()
+            if a_acc == clean_acc and a_pin == clean_pin:
                 if name:
-                    a["name"] = name
+                    a["name"] = name.strip()
                 if email:
-                    a["email"] = email
+                    a["email"] = email.strip()
                 if phone:
-                    a["phone"] = phone
+                    a["phone"] = phone.strip()
                 if address:
-                    a["address"] = address
+                    a["address"] = address.strip()
                 if new_pin:
-                    if len(new_pin) == 4 and new_pin.isdigit():
-                        a["pin"] = int(new_pin)
+                    new_pin_str = str(new_pin).strip()
+                    if len(new_pin_str) == 4 and new_pin_str.isdigit():
+                        a["pin"] = new_pin_str
                     else:
                         return False, "PIN must be exactly 4 digits."
                 cls._save_data(accounts)
@@ -277,9 +390,12 @@ class Bank:
     @classmethod
     def delete_user(cls, acc_no, pin):
         accounts = cls._load_data()
+        clean_acc = str(acc_no).strip().lower()
+        clean_pin = str(pin).strip()
         for i, a in enumerate(accounts):
-            a_acc = a.get("accountNo") or a.get("accountNo.")
-            if a_acc == acc_no and a.get("pin") == int(pin):
+            a_acc = str(a.get("accountNo") or a.get("accountNo.") or "").strip().lower()
+            a_pin = str(a.get("pin") or "").strip()
+            if a_acc == clean_acc and a_pin == clean_pin:
                 accounts.pop(i)
                 cls._save_data(accounts)
                 return True, "Account deleted successfully."

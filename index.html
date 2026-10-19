@@ -121,6 +121,108 @@
       dashTab: 'dashboard' // 'dashboard' | 'deposit' | 'withdraw' | 'transfer' | 'balance' | 'history' | 'cards' | 'settings'
     };
 
+    // =================================================================
+    // UNIFIED HYBRID CLIENT-CLOUD PERSISTENCE LEDGER (Storage)
+    // =================================================================
+    const Storage = {
+      KEY_SESSION: 'vaultx_active_session',
+      KEY_ACCOUNTS: 'vaultx_accounts_ledger',
+
+      getSession: () => {
+        try {
+          const raw = localStorage.getItem(Storage.KEY_SESSION);
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) {
+          return null;
+        }
+      },
+
+      setSession: (user, pin) => {
+        try {
+          if (!user) return;
+          const cleanPin = String(pin || user.pin || '').trim();
+          localStorage.setItem(Storage.KEY_SESSION, JSON.stringify({ user, pin: cleanPin }));
+          Storage.saveAccount(user);
+        } catch (e) {}
+      },
+
+      clearSession: () => {
+        try {
+          localStorage.removeItem(Storage.KEY_SESSION);
+        } catch (e) {}
+      },
+
+      getAccounts: () => {
+        try {
+          const raw = localStorage.getItem(Storage.KEY_ACCOUNTS);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      },
+
+      saveAccount: (user) => {
+        try {
+          if (!user) return;
+          const accounts = Storage.getAccounts();
+          const accNo = String(user.accountNo || user['accountNo.'] || '').trim().toLowerCase();
+          const idx = accounts.findIndex(a => {
+            const aAcc = String(a.accountNo || a['accountNo.'] || '').trim().toLowerCase();
+            return aAcc === accNo;
+          });
+          if (idx >= 0) {
+            accounts[idx] = { ...accounts[idx], ...user };
+          } else {
+            accounts.push(user);
+          }
+          localStorage.setItem(Storage.KEY_ACCOUNTS, JSON.stringify(accounts));
+        } catch (e) {}
+      },
+
+      findLocalAccount: (identifier, pin) => {
+        const accounts = Storage.getAccounts();
+        const cleanId = String(identifier || '').trim().toLowerCase();
+        const cleanPin = String(pin || '').trim();
+        return accounts.find(a => {
+          const aAcc = String(a.accountNo || a['accountNo.'] || '').trim().toLowerCase();
+          const aEmail = String(a.email || '').trim().toLowerCase();
+          const aPin = String(a.pin || '').trim();
+          return (aAcc === cleanId || aEmail === cleanId) && aPin === cleanPin;
+        });
+      },
+
+      syncToBackend: async (user) => {
+        if (!user) return;
+        try {
+          await apiCall('/api/sync', { user });
+        } catch (e) {}
+      }
+    };
+
+    let directoryCache = [];
+    async function loadBeneficiaries() {
+      try {
+        const res = await apiCall('/api/directory', null, 'GET');
+        const serverAccs = res && res.ok && Array.isArray(res.accounts) ? res.accounts : [];
+        const localAccs = Storage.getAccounts().map(a => ({
+          accountNo: a.accountNo || a['accountNo.'],
+          name: a.name,
+          email: a.email,
+          acc_type: a.acc_type || 'Savings'
+        }));
+        
+        const map = new Map();
+        [...serverAccs, ...localAccs].forEach(a => {
+          if (a && a.accountNo) {
+            map.set(String(a.accountNo).trim().toLowerCase(), a);
+          }
+        });
+        directoryCache = Array.from(map.values());
+      } catch (e) {
+        directoryCache = Storage.getAccounts();
+      }
+    }
+
     // Modern Vector Brand Logo SVG
     function getVaultXLogo(size = "w-8 h-8") {
       return `
@@ -145,26 +247,26 @@
     }
 
     // Unified Resilient API Caller
-    async function apiCall(endpoint, payload) {
+    async function apiCall(endpoint, payload = null, method = 'POST') {
       try {
         const isFile = window.location.protocol === 'file:';
         const baseUrl = isFile ? 'http://127.0.0.1:8000' : '';
         let url = endpoint.startsWith('http') ? endpoint : baseUrl + endpoint;
         
-        let res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        let opts = {
+          method: method,
+          headers: { 'Content-Type': 'application/json' }
+        };
+        if (method !== 'GET' && payload !== null) {
+          opts.body = JSON.stringify(payload);
+        }
+
+        let res = await fetch(url, opts);
 
         // Auto-fallback: if /api/route 404s, attempt /route
         if (res.status === 404 && endpoint.startsWith('/api/')) {
           const fallbackUrl = baseUrl + endpoint.replace('/api/', '/');
-          res = await fetch(fallbackUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
+          res = await fetch(fallbackUrl, opts);
         }
         
         return await res.json();
@@ -176,8 +278,15 @@
     async function refreshUser() {
       if (!state.user) return;
       const accNo = state.user.accountNo || state.user['accountNo.'];
-      const res = await apiCall('/api/login', { accountNo: accNo, pin: String(state.sessionPin) });
-      if (res.ok) state.user = res.user;
+      let res = await apiCall('/api/login', { accountNo: accNo, pin: String(state.sessionPin) });
+      if (!res.ok) {
+        await Storage.syncToBackend(state.user);
+        res = await apiCall('/api/login', { accountNo: accNo, pin: String(state.sessionPin) });
+      }
+      if (res.ok) {
+        state.user = res.user;
+        Storage.setSession(res.user, state.sessionPin);
+      }
     }
 
     function showToast(msg, isSuccess = true) {
@@ -320,6 +429,9 @@
     // FEATURE: ACCOUNT CREATION SUCCESS MODAL
     // =================================================================
     function showAccountSuccessModal(user, pin) {
+      Storage.saveAccount(user);
+      Storage.setSession(user, pin);
+      loadBeneficiaries();
       const accNo = esc(user.accountNo || user['accountNo.']);
       openModal(`
         <div class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 border border-emerald-500/40 shadow-2xl relative space-y-6 text-center">
@@ -361,7 +473,7 @@
             <i class="fas fa-circle-exclamation mr-1"></i> Please note down your Account Number and PIN to access your account.
           </p>
 
-          <button onclick="closeModal(); state.user = ${JSON.stringify(user).replace(/"/g, '&quot;')}; state.sessionPin = '${pin}'; state.dashTab = 'dashboard'; render();"
+          <button onclick="closeModal(); state.user = Storage.getSession() ? Storage.getSession().user : ${JSON.stringify(user).replace(/"/g, '&quot;')}; state.sessionPin = '${pin}'; Storage.setSession(state.user, state.sessionPin); state.dashTab = 'dashboard'; render();"
             class="w-full py-4 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-purple-600/30 text-sm transition-all hover:scale-[1.01]">
             <span>Proceed to Account Dashboard</span>
             <i class="fas fa-arrow-right ml-1"></i>
@@ -1216,16 +1328,34 @@
 
             <form id="transferForm" class="space-y-5">
               <div>
-                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Recipient Account Number or Email</label>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Recipient Account Number or Email</label>
+                  <span class="text-[10px] text-cyan-400 font-semibold">Click badge to auto-fill</span>
+                </div>
                 <input type="text" id="tr_target" placeholder="Recipient's account number or email" required
                   class="w-full px-4 py-3 rounded-xl bg-[#0F0826] border border-purple-500/30 text-white focus:outline-none focus:border-cyan-400 text-sm">
+                
+                <!-- Quick Beneficiaries Chips -->
+                <div class="mt-2.5 space-y-1.5">
+                  <span class="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Quick Beneficiaries (Verified Accounts)</span>
+                  <div class="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
+                    ${(directoryCache.filter(a => (a.accountNo||'').toLowerCase() !== String(accNo).toLowerCase()).slice(0, 8)).map(a => `
+                      <button type="button" onclick="document.getElementById('tr_target').value='${esc(a.accountNo)}'; showToast('Recipient set to ${esc(a.name)} (${esc(a.accountNo)})', true);"
+                        class="px-2.5 py-1.5 rounded-lg bg-cyan-950/40 hover:bg-cyan-900/50 border border-cyan-500/30 text-[11px] text-cyan-200 font-medium flex items-center gap-1.5 transition-all">
+                        <i class="fas fa-user-check text-cyan-400 text-[10px]"></i>
+                        <span class="font-bold">${esc(a.name)}</span>
+                        <span class="font-mono text-amber-300">(${esc(a.accountNo)})</span>
+                      </button>
+                    `).join('') || '<span class="text-xs text-slate-500 italic">No other accounts in local directory yet.</span>'}
+                  </div>
+                </div>
               </div>
 
               <div>
                 <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Transfer Amount (₹)</label>
                 <div class="relative">
                   <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-xl font-bold text-cyan-400">₹</span>
-                  <input type="number" id="tr_amt" min="1" max="${balance}" placeholder="Enter amount to transfer" required
+                  <input type="number" id="tr_amt" min="1" max="${balance}" step="any" placeholder="Enter amount to transfer" required
                     class="w-full pl-10 pr-4 py-4 rounded-xl bg-[#0F0826] border border-purple-500/30 text-2xl font-bold font-mono text-white focus:outline-none focus:border-cyan-400">
                 </div>
               </div>
@@ -1430,14 +1560,27 @@
               return;
             }
 
-            const res = await apiCall('/api/login', { accountNo: acc, pin: pinRaw });
+            // 1. Try Backend API
+            let res = await apiCall('/api/login', { accountNo: acc, pin: pinRaw });
+
+            // 2. Fallback: if serverless instance lost the memory, check local ledger
+            if (!res.ok) {
+              const localUser = Storage.findLocalAccount(acc, pinRaw);
+              if (localUser) {
+                await Storage.syncToBackend(localUser);
+                res = { ok: true, user: localUser };
+              }
+            }
+
             if (res.ok) {
               state.user = res.user;
               state.sessionPin = String(pinRaw);
               state.dashTab = 'dashboard';
-              showToast("Authentication successful! Welcome back.", true);
+              Storage.setSession(res.user, pinRaw);
+              await loadBeneficiaries();
+              showToast("Welcome back, " + (res.user.name || "Member") + "!", true);
             } else {
-              showToast(res.msg || "Invalid credentials.", false);
+              showToast(res.msg || "Invalid Account Number or PIN.", false);
               btn.innerHTML = originalText;
             }
             render();
@@ -1473,7 +1616,9 @@
 
             const res = await apiCall('/api/create', { name, age, email, phone, accType, pin });
             if (res.ok) {
-              // Open Dedicated Success Modal showing the new account number clearly
+              Storage.saveAccount(res.user);
+              Storage.setSession(res.user, pin);
+              await loadBeneficiaries();
               showAccountSuccessModal(res.user, pin);
             } else {
               showToast(res.msg || "Account creation failed.", false);
@@ -1488,6 +1633,7 @@
       const logoutBtn = document.getElementById('logoutLink');
       const mobileLogoutBtn = document.getElementById('mobileLogout');
       const doLogout = () => {
+        Storage.clearSession();
         state.user = null;
         state.sessionPin = null;
         state.authTab = 'landing';
@@ -1514,7 +1660,10 @@
           const accNo = user.accountNo || user['accountNo.'];
           const res = await apiCall('/api/deposit', { accountNo: accNo, pin: state.sessionPin, amount: amt });
           if (res.ok) {
-            showToast(`Deposited ₹${amt.toLocaleString()} successfully!`, true);
+            showToast(res.msg || `Deposited ₹${amt.toLocaleString()} successfully!`, true);
+            user.balance = Math.round((Number(user.balance || 0) + amt) * 100) / 100;
+            Storage.saveAccount(user);
+            Storage.setSession(user, state.sessionPin);
             await refreshUser();
             state.dashTab = 'dashboard';
           } else {
@@ -1533,7 +1682,10 @@
           const accNo = user.accountNo || user['accountNo.'];
           const res = await apiCall('/api/withdraw', { accountNo: accNo, pin: state.sessionPin, amount: amt });
           if (res.ok) {
-            showToast(`Withdrew ₹${amt.toLocaleString()} successfully!`, true);
+            showToast(res.msg || `Withdrew ₹${amt.toLocaleString()} successfully!`, true);
+            user.balance = Math.max(0, Math.round((Number(user.balance || 0) - amt) * 100) / 100);
+            Storage.saveAccount(user);
+            Storage.setSession(user, state.sessionPin);
             await refreshUser();
             state.dashTab = 'dashboard';
           } else {
@@ -1548,16 +1700,84 @@
       if (transferForm) {
         transferForm.onsubmit = async (e) => {
           e.preventDefault();
+          const btn = transferForm.querySelector('button[type="submit"]');
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Transfer...';
+
           const target = document.getElementById('tr_target').value.trim();
           const amt = Number(document.getElementById('tr_amt').value);
           const accNo = user.accountNo || user['accountNo.'];
-          const res = await apiCall('/api/transfer', { accountNo: accNo, pin: state.sessionPin, targetAccount: target, amount: amt });
+
+          if (!target) {
+            showToast("Please enter a recipient account number or email.", false);
+            btn.innerHTML = originalText;
+            return;
+          }
+          if (isNaN(amt) || amt <= 0) {
+            showToast("Please enter a valid transfer amount.", false);
+            btn.innerHTML = originalText;
+            return;
+          }
+          if (amt > Number(user.balance || 0)) {
+            showToast(`Insufficient balance. Current balance is ₹${Number(user.balance||0).toLocaleString()}`, false);
+            btn.innerHTML = originalText;
+            return;
+          }
+
+          // Pre-sync sender to serverless container
+          await Storage.syncToBackend(state.user);
+
+          // If target is registered in local storage, sync target to serverless container
+          const localTarget = Storage.getAccounts().find(a => {
+            const aAcc = String(a.accountNo || a['accountNo.'] || '').trim().toLowerCase();
+            const aEmail = String(a.email || '').trim().toLowerCase();
+            const t = target.toLowerCase();
+            return aAcc === t || aEmail === t;
+          });
+          if (localTarget) {
+            await Storage.syncToBackend(localTarget);
+          }
+
+          const res = await apiCall('/api/transfer', {
+            accountNo: accNo,
+            pin: String(state.sessionPin),
+            targetAccount: target,
+            amount: amt
+          });
+
           if (res.ok) {
-            showToast(`Transferred ₹${amt.toLocaleString()} to ${target}!`, true);
+            showToast(res.msg || `Transferred ₹${amt.toLocaleString()} successfully!`, true);
+            user.balance = Math.max(0, Math.round((Number(user.balance || 0) - amt) * 100) / 100);
+            if (!user.transactions) user.transactions = [];
+            user.transactions.push({
+              date: new Date().toLocaleString(),
+              type: 'TRANSFER OUT',
+              amount: amt,
+              balance: user.balance,
+              detail: `Transferred to ${target}`
+            });
+
+            if (localTarget) {
+              localTarget.balance = Math.round((Number(localTarget.balance || 0) + amt) * 100) / 100;
+              if (!localTarget.transactions) localTarget.transactions = [];
+              localTarget.transactions.push({
+                date: new Date().toLocaleString(),
+                type: 'TRANSFER IN',
+                amount: amt,
+                balance: localTarget.balance,
+                detail: `Received from ${user.name || accNo}`
+              });
+              Storage.saveAccount(localTarget);
+            }
+
+            Storage.saveAccount(user);
+            Storage.setSession(user, state.sessionPin);
             await refreshUser();
+            await loadBeneficiaries();
             state.dashTab = 'dashboard';
           } else {
             showToast(res.msg || "Transfer failed.", false);
+            btn.innerHTML = originalText;
           }
           render();
         };
@@ -1582,7 +1802,14 @@
           });
 
           if (res.ok) {
-            if (res.newPin) state.sessionPin = String(res.newPin);
+            if (name) user.name = name;
+            if (email) user.email = email;
+            if (res.newPin) {
+              state.sessionPin = String(res.newPin);
+              user.pin = String(res.newPin);
+            }
+            Storage.saveAccount(user);
+            Storage.setSession(user, state.sessionPin);
             await refreshUser();
             showToast("Profile details updated successfully!", true);
           } else {
@@ -1600,6 +1827,7 @@
             const accNo = user.accountNo || user['accountNo.'];
             const res = await apiCall('/api/delete', { accountNo: accNo, pin: state.sessionPin });
             if (res.ok) {
+              Storage.clearSession();
               state.user = null;
               state.sessionPin = null;
               state.authTab = 'landing';
@@ -1623,6 +1851,7 @@
         render();
       }
     }
+
     // Primary Application Renderer
     function render() {
       const app = document.getElementById('app');
@@ -1640,8 +1869,19 @@
     }
     window.render = render;
 
-    // Boot App
-    render();
+    // Boot App with Auto-Login & Beneficiary Pre-fetch
+    (async function init() {
+      const savedSession = Storage.getSession();
+      if (savedSession && savedSession.user && savedSession.pin) {
+        state.user = savedSession.user;
+        state.sessionPin = String(savedSession.pin);
+        state.dashTab = 'dashboard';
+        Storage.syncToBackend(savedSession.user);
+        refreshUser();
+      }
+      await loadBeneficiaries();
+      render();
+    })();
   </script>
 
   <!-- Floating Chat Widget (Gemini AI Assistant) -->
